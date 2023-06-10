@@ -1,0 +1,22 @@
+name: JoinProtection
+version: '${version}'
+main: me.rockquiet.joinprotection.JoinProtection
+description: Timed join protection
+author: rockquiet
+api-version: 1.19
+commands:
+  joinprotection:
+    description: joinprotection command
+permissions:
+  joinprotection.use:
+    description: if the player has join protection
+    default: true
+  joinprotection.reload:
+    description: reloads the config
+    default: op
+  joinprotection.bypass.cancel-on-move:
+    description: bypasses the cancel on move option
+    default: false
+  joinprotection.bypass.cancel-on-attack:
+    description: bypasses the cancel on attack option
+    default: false

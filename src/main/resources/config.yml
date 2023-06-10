@@ -1,0 +1,63 @@
+# JoinProtection by rockquiet
+plugin:
+  # if the plugin should search for updates on server start
+  update-checks: true # TODO
+  # toggle if the join protection is enabled
+  enabled: true
+  # protection time in seconds
+  # add NUMBER amount of seconds to a player: joinprotection.plus-NUMBER
+  protection-time: 10
+
+# cancel protection timer
+cancel:
+  # if attacking an entity
+  on-attack: true
+  # if player moved
+  on-move: true
+  # distance the player is allowed to move without cancelling (y-axis is ignored)
+  distance: 3.0
+
+# when the player is...
+modules:
+  # ...damaged by an entity
+  disable_damage_by_entities: true
+  # ...damaged by a block
+  disable_damage_by_blocks: false
+  # ...damaged by whatever not cancelled by the first two (fall damage, etc.)
+  disable_damage: false
+  # ...targeted by an entity
+  disable_entity_targeting: true
+
+# particle aura around player with active join protection
+particles:
+  enabled: true
+  # all particles: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
+  # good looking particles / display duration:
+  # mid: WAX_ON, WAX_OFF, ENCHANTMENT_TABLE
+  # long: VILLAGER_HAPPY
+  type: ENCHANTMENT_TABLE
+  # the number of particles which get used
+  amount: 1
+  # how often the particles refresh (in ticks)
+  refresh-rate: 4
+  # particle aura size
+  circles: 4
+
+# plays a sound to players attacking others with active join protection
+sound:
+  enabled: true
+  # all sounds: https://www.andre601.ch/Spigot-Sounds/sounds
+  type: ITEM_SHIELD_BLOCK
+  # the volume of the sound
+  volume: 0.8
+  # the pitch of the sound
+  pitch: 1.0
+
+messages:
+  prefix: "<gray>[</gray><gradient:#7287fd:#04a5e5>JoinProtection</gradient><gray>]</gray>"
+  noPerms: "%prefix% <gray>[JoinProtection<gray>] <red>No permissions!"
+  reload: "%prefix% <green>Configuration reloaded successfully."
+  timeRemaining: "<gradient:#7287fd:#04a5e5>Join Protection</gradient> <dark_gray><b>»</b> <white>%time%<gray>s"
+  protectionEnded: "<gradient:#7287fd:#04a5e5>Join Protection</gradient> <dark_gray><b>»</b> <gradient:#e64553:#d20f39>Elapsed!</gradient>"
+  protectionDeactivated: "<gradient:#7287fd:#04a5e5>Join Protection</gradient> <dark_gray><b>»</b> <gradient:#e64553:#d20f39>Disabled!</gradient>"
+  protectionDeactivatedAttack: "<gradient:#7287fd:#04a5e5>Join Protection</gradient> <dark_gray><b>»</b> <gradient:#e64553:#d20f39>Disabled because of your attack!</gradient>"
