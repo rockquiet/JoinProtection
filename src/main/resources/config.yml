@@ -1,7 +1,7 @@
 # JoinProtection by rockquiet
 plugin:
   # if the plugin should search for updates on server start
-  update-checks: true # TODO
+  update-checks: true
   # toggle if the join protection is enabled
   enabled: true
   # protection time in seconds

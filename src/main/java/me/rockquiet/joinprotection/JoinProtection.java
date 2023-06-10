@@ -9,6 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.IOException;
+
 public class JoinProtection extends JavaPlugin {
 
     @Override
@@ -22,5 +24,13 @@ public class JoinProtection extends JavaPlugin {
 
         getCommand("joinprotection").setExecutor(new JoinProtectionCommand(this));
         getCommand("joinprotection").setTabCompleter(new TabComplete());
+
+        if (getConfig().getBoolean("plugin.update-checks")) {
+            try {
+                new UpdateChecker().check(this);
+            } catch (IOException e) {
+                getLogger().info("Unable to check for updates: " + e.getMessage());
+            }
+        }
     }
 }
