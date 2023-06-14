@@ -1,5 +1,8 @@
 <div align="center">
 
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/joinprotection?logo=modrinth&style=for-the-badge)](https://modrinth.com/plugin/joinprotection)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/rockquiet/joinprotection?style=for-the-badge&logo=github)](https://github.com/rockquiet/JoinProtection/releases)
+
 # JoinProtection
 
 Timed join protection plugin with many configurable options.
@@ -35,3 +38,12 @@ Timed join protection plugin with many configurable options.
 `joinprotection.bypass.cancel-on-move` ▶ Bypass the cancel on move option
 
 `joinprotection.bypass.cancel-on-attack` ▶ Bypass the cancel on attack option
+
+## Download
+
+Plugin jars are available in the [Releases](https://github.com/rockquiet/JoinProtection/releases) section,
+on [Modrinth](https://modrinth.com/plugin/joinprotection)
+and [Hangar](https://hangar.papermc.io/rockquiet/JoinProtection).
+
+[![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@2/assets/cozy/available/modrinth_64h.png)](https://modrinth.com/plugin/joinprotection)
+[![hangar](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_64h.png)](https://hangar.papermc.io/rockquiet/JoinProtection)
