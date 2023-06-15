@@ -17,10 +17,13 @@ public class JoinProtection extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
+        ProtectionHandler protectionHandler = new ProtectionHandler(this);
+
         PluginManager pluginManager = Bukkit.getPluginManager();
-        pluginManager.registerEvents(new JoinListener(this), this);
-        pluginManager.registerEvents(new DamageListener(this), this);
-        pluginManager.registerEvents(new MoveListener(this), this);
+        pluginManager.registerEvents(protectionHandler, this);
+        pluginManager.registerEvents(new JoinListener(this, protectionHandler), this);
+        pluginManager.registerEvents(new DamageListener(this, protectionHandler), this);
+        pluginManager.registerEvents(new MoveListener(this, protectionHandler), this);
 
         getCommand("joinprotection").setExecutor(new JoinProtectionCommand(this));
         getCommand("joinprotection").setTabCompleter(new TabComplete());

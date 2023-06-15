@@ -1,7 +1,7 @@
 package me.rockquiet.joinprotection.listeners;
 
 import me.rockquiet.joinprotection.JoinProtection;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import me.rockquiet.joinprotection.ProtectionHandler;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,19 +14,21 @@ import org.bukkit.event.entity.EntityTargetEvent;
 public class DamageListener implements Listener {
 
     private final JoinProtection joinProtection;
+    private final ProtectionHandler protectionHandler;
 
-    public DamageListener(JoinProtection joinProtection) {
+    public DamageListener(JoinProtection joinProtection,
+                          ProtectionHandler protectionHandler) {
         this.joinProtection = joinProtection;
+        this.protectionHandler = protectionHandler;
     }
 
     @EventHandler
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
-        if (joinProtection.getConfig().getBoolean("cancel.on-attack") && (event.getDamager() instanceof Player player) && JoinListener.invinciblePlayers.containsKey(player.getUniqueId()) && !event.getDamager().hasPermission("joinprotection.bypass.cancel-on-move")) {
-            JoinListener.invinciblePlayers.remove(player.getUniqueId());
-            player.sendActionBar(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString("messages.protectionDeactivatedAttack")));
+        if (joinProtection.getConfig().getBoolean("cancel.on-attack") && (event.getDamager() instanceof Player player) && protectionHandler.hasProtection(player) && !event.getDamager().hasPermission("joinprotection.bypass.cancel-on-attack")) {
+            protectionHandler.cancelProtection(player, "messages.protectionDeactivatedAttack");
         }
 
-        if (joinProtection.getConfig().getBoolean("sound.enabled") && (event.getEntity() instanceof Player player) && JoinListener.invinciblePlayers.containsKey(player.getUniqueId()) && (event.getDamager() instanceof Player attacker)) {
+        if (joinProtection.getConfig().getBoolean("sound.enabled") && (event.getEntity() instanceof Player player) && protectionHandler.hasProtection(player) && (event.getDamager() instanceof Player attacker)) {
             String sound = joinProtection.getConfig().getString("sound.type");
             float volume = (float) joinProtection.getConfig().getDouble("sound.volume");
             float pitch = (float) joinProtection.getConfig().getDouble("sound.pitch");
@@ -34,7 +36,7 @@ public class DamageListener implements Listener {
             attacker.playSound(player, Sound.valueOf(sound), volume, pitch);
         }
 
-        if (joinProtection.getConfig().getBoolean("modules.disable_damage_by_entities") && (event.getEntity() instanceof Player player) && JoinListener.invinciblePlayers.containsKey(player.getUniqueId())) {
+        if ((event.getEntity() instanceof Player player) && protectionHandler.isEventCancelled(player, "modules.disable_damage_by_entities")) {
             event.setCancelled(true);
         }
     }
@@ -45,7 +47,7 @@ public class DamageListener implements Listener {
             return;
         }
 
-        if (joinProtection.getConfig().getBoolean("modules.disable_damage_by_blocks") && JoinListener.invinciblePlayers.containsKey(player.getUniqueId())) {
+        if (protectionHandler.isEventCancelled(player, "modules.disable_damage_by_blocks")) {
             event.setCancelled(true);
         }
     }
@@ -56,7 +58,7 @@ public class DamageListener implements Listener {
             return;
         }
 
-        if (joinProtection.getConfig().getBoolean("modules.disable_damage") && JoinListener.invinciblePlayers.containsKey(player.getUniqueId())) {
+        if (protectionHandler.isEventCancelled(player, "modules.disable_damage")) {
             event.setCancelled(true);
         }
     }
@@ -68,7 +70,7 @@ public class DamageListener implements Listener {
             return;
         }
 
-        if (joinProtection.getConfig().getBoolean("modules.disable_entity_targeting") && JoinListener.invinciblePlayers.containsKey(player.getUniqueId())) {
+        if (protectionHandler.isEventCancelled(player, "modules.disable_entity_targeting")) {
             event.setCancelled(true);
         }
     }
