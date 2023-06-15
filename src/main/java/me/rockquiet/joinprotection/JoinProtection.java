@@ -2,6 +2,7 @@ package me.rockquiet.joinprotection;
 
 import me.rockquiet.joinprotection.commands.JoinProtectionCommand;
 import me.rockquiet.joinprotection.commands.TabComplete;
+import me.rockquiet.joinprotection.listeners.BlockListener;
 import me.rockquiet.joinprotection.listeners.DamageListener;
 import me.rockquiet.joinprotection.listeners.JoinListener;
 import me.rockquiet.joinprotection.listeners.MoveListener;
@@ -24,6 +25,7 @@ public class JoinProtection extends JavaPlugin {
         pluginManager.registerEvents(new JoinListener(this, protectionHandler), this);
         pluginManager.registerEvents(new DamageListener(this, protectionHandler), this);
         pluginManager.registerEvents(new MoveListener(this, protectionHandler), this);
+        pluginManager.registerEvents(new BlockListener(protectionHandler), this);
 
         getCommand("joinprotection").setExecutor(new JoinProtectionCommand(this));
         getCommand("joinprotection").setTabCompleter(new TabComplete());

@@ -16,6 +16,8 @@ cancel:
   on-move: true
   # distance the player is allowed to move without cancelling (y-axis is ignored)
   distance: 3.0
+  # if player breaks/places blocks
+  on-block-interact: false
 
 # when the player is...
 modules:
