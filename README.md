@@ -5,7 +5,8 @@
 
 # JoinProtection
 
-Timed join protection plugin with many configurable options.
+A plugin that protects players from mobs and damage for a set period of time after they join\
+...with many configurable options.
 
 </div>
 
@@ -21,14 +22,14 @@ Timed join protection plugin with many configurable options.
 - Cancel the join protection if the player...
     - ...attacks an entity
     - ...moves X blocks
+    - ...breaks/places blocks
 - Particles aura during active join protection
 - Play a sound to players trying to attack others with active join protection
 - Everything can be edited and disabled
 
 ## Commands & Permissions
 
-`/joinprotection reload` ▶ Reloads the config
-
+`/joinprotection reload` ▶ Reloads the config\
 ↪ Permission: `joinprotection.reload`
 
 `joinprotection.use` ▶ If the Player has join protection _(default for everyone)_
@@ -38,6 +39,8 @@ Timed join protection plugin with many configurable options.
 `joinprotection.bypass.cancel-on-move` ▶ Bypass the cancel on move option
 
 `joinprotection.bypass.cancel-on-attack` ▶ Bypass the cancel on attack option
+
+`joinprotection.bypass.cancel-on-block-interact` ▶ Bypass the cancel on block interact option
 
 ## Download
 

@@ -1,7 +1,7 @@
 name: JoinProtection
 version: '${version}'
 main: me.rockquiet.joinprotection.JoinProtection
-description: Timed join protection
+description: Protects players from mobs and damage for a set period of time after they join
 author: rockquiet
 api-version: 1.19
 commands:
