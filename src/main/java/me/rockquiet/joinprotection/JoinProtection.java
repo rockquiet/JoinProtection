@@ -18,6 +18,10 @@ public class JoinProtection extends JavaPlugin {
     public void onEnable() {
         saveDefaultConfig();
 
+        getConfig().addDefault("cancel.on-block-interact", false);
+        getConfig().options().copyDefaults(true);
+        saveConfig();
+
         ProtectionHandler protectionHandler = new ProtectionHandler(this);
 
         PluginManager pluginManager = Bukkit.getPluginManager();
