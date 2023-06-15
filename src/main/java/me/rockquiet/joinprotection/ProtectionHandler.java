@@ -47,13 +47,17 @@ public class ProtectionHandler implements Listener {
                 if (ProtectionHandler.invinciblePlayers.containsKey(uuid)) {
                     // runs until timer reached 1
                     if (timeRemaining <= protectionTime && timeRemaining >= 1) {
-                        player.sendActionBar(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString("messages.timeRemaining").replace("%time%", String.valueOf(timeRemaining))));
+                        if (joinProtection.getConfig().contains("messages.timeRemaining") && !joinProtection.getConfig().getString("messages.timeRemaining").isBlank()) {
+                            player.sendActionBar(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString("messages.timeRemaining").replace("%time%", String.valueOf(timeRemaining))));
+                        }
                     }
                     // runs once
                     if (timeRemaining == 0) {
                         ProtectionHandler.invinciblePlayers.remove(uuid);
                         cancel();
-                        player.sendActionBar(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString("messages.protectionEnded")));
+                        if (joinProtection.getConfig().contains("messages.protectionEnded") && !joinProtection.getConfig().getString("messages.protectionEnded").isBlank()) {
+                            player.sendActionBar(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString("messages.protectionEnded")));
+                        }
                     }
                     timeRemaining--;
                 } else {
@@ -111,7 +115,7 @@ public class ProtectionHandler implements Listener {
 
     public void cancelProtectionIfEnabled(Player player, String permission, String cancelOn, String messageOnCancel) {
         if (invinciblePlayers.containsKey(player.getUniqueId()) && !player.hasPermission(permission)) {
-            boolean shouldCancel = joinProtection.getConfig().getBoolean(cancelOn);
+            boolean shouldCancel = (joinProtection.getConfig().contains(cancelOn) && joinProtection.getConfig().getBoolean(cancelOn));
 
             if (shouldCancel) {
                 cancelProtection(player, messageOnCancel);
@@ -121,11 +125,13 @@ public class ProtectionHandler implements Listener {
 
     public void cancelProtection(Player player, String messageOnCancel) {
         invinciblePlayers.remove(player.getUniqueId());
-        player.sendActionBar(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString(messageOnCancel)));
+        if (joinProtection.getConfig().contains(messageOnCancel) && !joinProtection.getConfig().getString(messageOnCancel).isBlank()) {
+            player.sendActionBar(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString(messageOnCancel)));
+        }
     }
 
     public boolean isEventCancelled(Player player, String module) {
-        return joinProtection.getConfig().getBoolean(module) && invinciblePlayers.containsKey(player.getUniqueId());
+        return joinProtection.getConfig().contains(module) && joinProtection.getConfig().getBoolean(module) && invinciblePlayers.containsKey(player.getUniqueId());
     }
 
     // clear map
