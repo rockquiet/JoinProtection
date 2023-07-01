@@ -16,6 +16,12 @@ public class JoinProtection extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (Integer.parseInt(Bukkit.getBukkitVersion().split("\\.")[1].replace("-R0", "")) <= 18 && !Bukkit.getBukkitVersion().contains("1.18.2")) {
+            getLogger().warning("You are running an incompatible server version. Please consider updating to 1.18.2 or newer.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         saveDefaultConfig();
 
         getConfig().addDefault("cancel.on-block-interact", false);

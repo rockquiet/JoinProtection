@@ -3,7 +3,7 @@ version: '${version}'
 main: me.rockquiet.joinprotection.JoinProtection
 description: Protects players from mobs and damage for a set period of time after they join
 author: rockquiet
-api-version: 1.19
+api-version: 1.18
 commands:
   joinprotection:
     description: joinprotection command

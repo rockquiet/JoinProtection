@@ -1,6 +1,7 @@
 package me.rockquiet.joinprotection.commands;
 
 import me.rockquiet.joinprotection.JoinProtection;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,15 +23,17 @@ public class JoinProtectionCommand implements CommandExecutor {
         }
 
         if ((sender instanceof Player player) && !player.hasPermission("joinprotection.reload")) {
-            player.sendRichMessage(joinProtection.getConfig().getString("messages.noPerms")
-                    .replace("%prefix%", joinProtection.getConfig().getString("messages.prefix"))
+            player.sendMessage(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString("messages.noPerms")
+                            .replace("%prefix%", joinProtection.getConfig().getString("messages.prefix"))
+                    )
             );
             return false;
         }
 
         joinProtection.reloadConfig();
-        sender.sendRichMessage(joinProtection.getConfig().getString("messages.reload")
-                .replace("%prefix%", joinProtection.getConfig().getString("messages.prefix"))
+        sender.sendMessage(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString("messages.reload")
+                        .replace("%prefix%", joinProtection.getConfig().getString("messages.prefix"))
+                )
         );
         return false;
     }
