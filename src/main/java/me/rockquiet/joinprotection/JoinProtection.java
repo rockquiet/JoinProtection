@@ -36,9 +36,9 @@ public class JoinProtection extends JavaPlugin {
 
         if (getConfig().getBoolean("plugin.update-checks")) {
             try {
-                new UpdateChecker().check(this);
+                new UpdateChecker(this);
             } catch (IOException e) {
-                getLogger().info("Unable to check for updates: " + e.getMessage());
+                getLogger().warning("Unable to check for updates: " + e.getMessage());
             }
         }
     }

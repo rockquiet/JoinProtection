@@ -6,19 +6,20 @@ import com.google.gson.JsonObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.module.ModuleDescriptor.Version;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class UpdateChecker {
 
-    public void check(JoinProtection plugin) throws IOException {
+    public UpdateChecker(JoinProtection plugin) throws IOException {
         URL obj = new URL("https://api.github.com/repos/rockquiet/joinprotection/releases/latest");
         HttpURLConnection con = (HttpURLConnection) obj.openConnection();
         con.setRequestMethod("GET");
         con.setRequestProperty("User-Agent", "Mozilla/5.0");
 
         if (con.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            plugin.getLogger().info("Unable to check for updates...");
+            plugin.getLogger().warning("Unable to check for updates...");
             return;
         }
 
@@ -31,14 +32,16 @@ public class UpdateChecker {
         }
         bufferedReader.close();
 
-        Gson gson = new Gson();
-        JsonObject jsonResponse = gson.fromJson(response.toString(), JsonObject.class);
+        JsonObject jsonResponse = new Gson().fromJson(response.toString(), JsonObject.class);
 
-        String latestVersion = jsonResponse.get("tag_name").getAsString().replaceFirst("^v", "");
-        String currentVersion = plugin.getDescription().getVersion();
+        Version latest = Version.parse(jsonResponse.get("tag_name").getAsString().replaceFirst("^v", ""));
+        Version current = Version.parse(plugin.getDescription().getVersion());
+        int compare = latest.compareTo(current);
 
-        if (!currentVersion.equalsIgnoreCase(latestVersion)) {
-            plugin.getLogger().info("An update is available! Latest version: " + latestVersion);
+        if (compare > 0) {
+            plugin.getLogger().info("An update is available! Latest version: " + latest + ", you are using: " + current);
+        } else if (compare < 0) {
+            plugin.getLogger().warning("You are running a newer version of the plugin than released. If you are using a development build, please report any bugs on the project's GitHub.");
         }
     }
 }
