@@ -57,7 +57,7 @@ sound:
 
 messages:
   prefix: "<gray>[</gray><gradient:#7287fd:#04a5e5>JoinProtection</gradient><gray>]</gray>"
-  noPerms: "%prefix% <gray>[JoinProtection<gray>] <red>No permissions!"
+  noPerms: "%prefix% <red>No permissions!"
   reload: "%prefix% <green>Configuration reloaded successfully."
   timeRemaining: "<gradient:#7287fd:#04a5e5>Join Protection</gradient> <dark_gray><b>»</b> <white>%time%<gray>s"
   protectionEnded: "<gradient:#7287fd:#04a5e5>Join Protection</gradient> <dark_gray><b>»</b> <gradient:#e64553:#d20f39>Elapsed!</gradient>"
