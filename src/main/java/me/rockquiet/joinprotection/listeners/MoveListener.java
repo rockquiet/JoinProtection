@@ -23,12 +23,12 @@ public class MoveListener implements Listener {
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
 
-        if (protectionHandler.hasProtection(player) && !player.hasPermission("joinprotection.bypass.cancel-on-move")) {
+        if (protectionHandler.hasProtection(player) && event.getFrom().distance(event.getTo()) > 0.1 && !player.hasPermission("joinprotection.bypass.cancel-on-move")) {
             Location joinLocation = protectionHandler.getLocation(player);
             boolean shouldCancel = joinProtection.getConfig().getBoolean("cancel.on-move");
             double distance = joinProtection.getConfig().getDouble("cancel.distance");
 
-            if (shouldCancel && joinLocation.set(joinLocation.getX(), player.getLocation().getY(), joinLocation.getZ()).distance(player.getLocation()) >= distance && event.hasChangedOrientation()) {
+            if (shouldCancel && joinLocation.set(joinLocation.getX(), player.getLocation().getY(), joinLocation.getZ()).distance(player.getLocation()) >= distance) {
                 protectionHandler.cancelProtection(player, "messages.protectionDeactivated");
             }
         }
