@@ -1,6 +1,5 @@
 package me.rockquiet.joinprotection.listeners;
 
-import me.rockquiet.joinprotection.JoinProtection;
 import me.rockquiet.joinprotection.ProtectionHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -9,12 +8,9 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class JoinListener implements Listener {
 
-    private final JoinProtection joinProtection;
     private final ProtectionHandler protectionHandler;
 
-    public JoinListener(JoinProtection joinProtection,
-                        ProtectionHandler protectionHandler) {
-        this.joinProtection = joinProtection;
+    public JoinListener(ProtectionHandler protectionHandler) {
         this.protectionHandler = protectionHandler;
     }
 
@@ -22,7 +18,7 @@ public class JoinListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (!joinProtection.getConfig().getBoolean("plugin.enabled") || !player.hasPermission("joinprotection.use")) {
+        if (!player.hasPermission("joinprotection.use") || !protectionHandler.isEnabledInWorld(player.getWorld()) && !player.hasPermission("joinprotection.bypass.world-list")) {
             return;
         }
 

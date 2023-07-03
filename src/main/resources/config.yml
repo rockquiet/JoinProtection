@@ -2,8 +2,14 @@
 plugin:
   # if the plugin should search for updates on server start
   update-checks: true
-  # toggle if the join protection is enabled
-  enabled: true
+  # a list of worlds where the plugin should or should not work
+  # DISABLED: world-list is not used
+  # BLACKLIST: the plugin will not work in worlds listed below
+  # WHITELIST: the plugin will only work in worlds listed below
+  list-type: disabled
+  world-list:
+    - ExampleEntryForWorldList
+    - AnotherExampleWorld
   # protection time in seconds
   # add NUMBER amount of seconds to a player: joinprotection.plus-NUMBER
   protection-time: 10

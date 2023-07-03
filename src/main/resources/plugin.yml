@@ -23,3 +23,6 @@ permissions:
   joinprotection.bypass.cancel-on-block-interact:
     description: bypasses the cancel on block interact option
     default: false
+  joinprotection.bypass.world-list:
+    description: bypasses the world-list
+    default: false

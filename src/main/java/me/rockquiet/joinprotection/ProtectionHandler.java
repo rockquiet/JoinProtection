@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -103,6 +104,18 @@ public class ProtectionHandler implements Listener {
                 }
             }
         }.runTaskTimer(joinProtection, 0, config.getLong("particles.refresh-rate"));
+    }
+
+    public boolean isEnabledInWorld(World world) {
+        FileConfiguration config = joinProtection.getConfig();
+        List<String> worldList = config.getStringList("plugin.world-list");
+        String worldName = world.getName();
+
+        return switch (config.getString("plugin.list-type").toLowerCase()) {
+            case "whitelist" -> worldList.stream().anyMatch(s -> s.equals(worldName));
+            case "blacklist" -> worldList.stream().noneMatch(s -> s.equals(worldName));
+            default -> true;
+        };
     }
 
     public boolean hasProtection(Player player) {
