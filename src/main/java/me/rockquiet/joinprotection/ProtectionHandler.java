@@ -71,36 +71,38 @@ public class ProtectionHandler implements Listener {
     }
 
     private void spawnParticles(Player player) {
-        if (joinProtection.getConfig().getBoolean("particles.enabled")) {
-            final long refreshRate = joinProtection.getConfig().getLong("particles.refresh-rate");
-            final double circles = joinProtection.getConfig().getLong("particles.circles");
-            new BukkitRunnable() {
-                final String particle = joinProtection.getConfig().getString("particles.type");
-                final int particleAmount = joinProtection.getConfig().getInt("particles.amount");
+        FileConfiguration config = joinProtection.getConfig();
+        if (!config.getBoolean("particles.enabled")) return;
 
-                @Override
-                public void run() {
-                    if (invinciblePlayers.containsKey(player.getUniqueId())) {
-                        Location location = player.getLocation().add(0, 1.5, 0);
+        if (joinProtection.getServer().getAverageTickTime() >= config.getDouble("particles.maximum-mspt")) return;
 
-                        for (double i = 0; i <= Math.PI; i += Math.PI / circles) { // 10 being the amount of circles.
-                            double radius = Math.sin(i); // we get the current radius
-                            double y = Math.cos(i); // we get the current y value.
-                            for (double a = 0; a < Math.PI * 2; a += Math.PI / circles) {
-                                double x = Math.cos(a) * radius;
-                                double z = Math.sin(a) * radius;
-                                location.add(x, y, z);
-                                // display particle at 'location'.
-                                player.getWorld().spawnParticle(Particle.valueOf(particle), location, particleAmount);
-                                location.subtract(x, y, z);
-                            }
+        new BukkitRunnable() {
+            final String particle = config.getString("particles.type");
+            final int particleAmount = config.getInt("particles.amount");
+            final double circles = config.getLong("particles.circles");
+            final World world = player.getWorld();
+
+            @Override
+            public void run() {
+                if (invinciblePlayers.containsKey(player.getUniqueId())) {
+                    Location location = player.getLocation().add(0, 1.5, 0);
+
+                    for (double i = 0; i <= Math.PI; i += Math.PI / circles) { // 10 being the amount of circles.
+                        double radius = Math.sin(i); // we get the current radius
+                        double y = Math.cos(i); // we get the current y value.
+                        for (double a = 0; a < Math.PI * 2; a += Math.PI / circles) {
+                            double x = Math.cos(a) * radius;
+                            double z = Math.sin(a) * radius;
+                            location.add(x, y, z);
+                            world.spawnParticle(Particle.valueOf(particle), location, particleAmount);
+                            location.subtract(x, y, z);
                         }
-                    } else {
-                        cancel();
                     }
+                } else {
+                    cancel();
                 }
-            }.runTaskTimer(joinProtection, 0, refreshRate);
-        }
+            }
+        }.runTaskTimer(joinProtection, 0, config.getLong("particles.refresh-rate"));
     }
 
     public boolean hasProtection(Player player) {
