@@ -32,7 +32,8 @@ public class JoinProtection extends JavaPlugin {
         }
         saveConfig();
 
-        ProtectionHandler protectionHandler = new ProtectionHandler(this);
+        MessageManager messageManager = new MessageManager();
+        ProtectionHandler protectionHandler = new ProtectionHandler(this, messageManager);
 
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(protectionHandler, this);
@@ -41,7 +42,7 @@ public class JoinProtection extends JavaPlugin {
         pluginManager.registerEvents(new MoveListener(this, protectionHandler), this);
         pluginManager.registerEvents(new BlockListener(protectionHandler), this);
 
-        getCommand("joinprotection").setExecutor(new JoinProtectionCommand(this));
+        getCommand("joinprotection").setExecutor(new JoinProtectionCommand(this, messageManager));
         getCommand("joinprotection").setTabCompleter(new TabComplete());
 
         if (getConfig().getBoolean("plugin.update-checks")) {

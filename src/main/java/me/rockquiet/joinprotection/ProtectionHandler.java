@@ -1,8 +1,9 @@
 package me.rockquiet.joinprotection;
 
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,12 +20,16 @@ public class ProtectionHandler implements Listener {
 
     public static final Map<UUID, Location> invinciblePlayers = new HashMap<>();
     private final JoinProtection joinProtection;
+    private final MessageManager messageManager;
 
-    public ProtectionHandler(JoinProtection joinProtection) {
+    public ProtectionHandler(JoinProtection joinProtection,
+                             MessageManager messageManager) {
         this.joinProtection = joinProtection;
+        this.messageManager = messageManager;
     }
 
     public void startProtection(Player player) {
+        FileConfiguration config = joinProtection.getConfig();
         UUID uuid = player.getUniqueId();
 
         invinciblePlayers.put(uuid, player.getLocation());
@@ -37,7 +42,7 @@ public class ProtectionHandler implements Listener {
                     return Integer.parseInt(segments[segments.length - 1]);
                 }).max(Integer::compareTo).ifPresent(bonusTime::set);
 
-        final int protectionTime = joinProtection.getConfig().getInt("plugin.protection-time") + bonusTime.get();
+        final int protectionTime = config.getInt("plugin.protection-time") + bonusTime.get();
 
         new BukkitRunnable() {
             int timeRemaining = protectionTime;
@@ -47,17 +52,13 @@ public class ProtectionHandler implements Listener {
                 if (ProtectionHandler.invinciblePlayers.containsKey(uuid)) {
                     // runs until timer reached 1
                     if (timeRemaining <= protectionTime && timeRemaining >= 1) {
-                        if (joinProtection.getConfig().contains("messages.timeRemaining") && !joinProtection.getConfig().getString("messages.timeRemaining").isBlank()) {
-                            player.sendActionBar(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString("messages.timeRemaining").replace("%time%", String.valueOf(timeRemaining))));
-                        }
+                        messageManager.sendActionbar(config, player, "messages.timeRemaining", "%time%", String.valueOf(timeRemaining));
                     }
                     // runs once
                     if (timeRemaining == 0) {
                         ProtectionHandler.invinciblePlayers.remove(uuid);
                         cancel();
-                        if (joinProtection.getConfig().contains("messages.protectionEnded") && !joinProtection.getConfig().getString("messages.protectionEnded").isBlank()) {
-                            player.sendActionBar(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString("messages.protectionEnded")));
-                        }
+                        messageManager.sendActionbar(config, player, "messages.protectionEnded");
                     }
                     timeRemaining--;
                 } else {
@@ -125,9 +126,8 @@ public class ProtectionHandler implements Listener {
 
     public void cancelProtection(Player player, String messageOnCancel) {
         invinciblePlayers.remove(player.getUniqueId());
-        if (joinProtection.getConfig().contains(messageOnCancel) && !joinProtection.getConfig().getString(messageOnCancel).isBlank()) {
-            player.sendActionBar(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString(messageOnCancel)));
-        }
+
+        messageManager.sendActionbar(joinProtection.getConfig(), player, messageOnCancel);
     }
 
     public boolean isEventCancelled(Player player, String module) {

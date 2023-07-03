@@ -1,19 +1,23 @@
 package me.rockquiet.joinprotection.commands;
 
 import me.rockquiet.joinprotection.JoinProtection;
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import me.rockquiet.joinprotection.MessageManager;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class JoinProtectionCommand implements CommandExecutor {
 
     private final JoinProtection joinProtection;
+    private final MessageManager messageManager;
 
-    public JoinProtectionCommand(JoinProtection joinProtection) {
+    public JoinProtectionCommand(JoinProtection joinProtection,
+                                 MessageManager messageManager) {
         this.joinProtection = joinProtection;
+        this.messageManager = messageManager;
     }
 
     @Override
@@ -22,19 +26,15 @@ public class JoinProtectionCommand implements CommandExecutor {
             return false;
         }
 
+        FileConfiguration config = joinProtection.getConfig();
+
         if ((sender instanceof Player player) && !player.hasPermission("joinprotection.reload")) {
-            player.sendMessage(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString("messages.noPerms")
-                            .replace("%prefix%", joinProtection.getConfig().getString("messages.prefix"))
-                    )
-            );
+            messageManager.sendMessage(config, player, "messages.noPerms");
             return false;
         }
 
         joinProtection.reloadConfig();
-        sender.sendMessage(MiniMessage.miniMessage().deserialize(joinProtection.getConfig().getString("messages.reload")
-                        .replace("%prefix%", joinProtection.getConfig().getString("messages.prefix"))
-                )
-        );
+        messageManager.sendMessage(config, sender, "messages.reload");
         return false;
     }
 }
