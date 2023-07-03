@@ -26,3 +26,18 @@ permissions:
   joinprotection.bypass.world-list:
     description: bypasses the world-list
     default: false
+  joinprotection.bypass.*:
+    description: grants all bypass permissions
+    default: false
+    children:
+      joinprotection.bypass.cancel-on-move: true
+      joinprotection.bypass.cancel-on-attack: true
+      joinprotection.bypass.cancel-on-block-interact: true
+      joinprotection.bypass.world-list: true
+  joinprotection.*:
+    description: grants all joinprotection permissions
+    default: false
+    children:
+      joinprotection.use: true
+      joinprotection.reload: true
+      joinprotection.bypass.*: true
