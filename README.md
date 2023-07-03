@@ -25,6 +25,7 @@ A plugin that protects players from mobs and damage for a set period of time aft
     - ...breaks/places blocks
 - Particles aura during active join protection
 - Play a sound to players trying to attack others with active join protection
+- Whitelist/Blacklist worlds to restrict the plugin's functionality
 - Everything can be edited and disabled
 
 ## Commands & Permissions
@@ -41,6 +42,12 @@ A plugin that protects players from mobs and damage for a set period of time aft
 `joinprotection.bypass.cancel-on-attack` ▶ Bypass the cancel on attack option
 
 `joinprotection.bypass.cancel-on-block-interact` ▶ Bypass the cancel on block interact option
+
+`joinprotection.bypass.world-list` ▶ Bypass the world-list option
+
+`joinprotection.*` ▶ Grants all permissions of the plugin
+
+`joinprotection.bypass.*` ▶ Grants all bypass permissions
 
 ## Download
 
