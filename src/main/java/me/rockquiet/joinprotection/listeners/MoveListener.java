@@ -3,6 +3,7 @@ package me.rockquiet.joinprotection.listeners;
 import me.rockquiet.joinprotection.JoinProtection;
 import me.rockquiet.joinprotection.ProtectionHandler;
 import org.bukkit.Location;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,10 +26,14 @@ public class MoveListener implements Listener {
 
         if (protectionHandler.hasProtection(player) && event.getFrom().distance(event.getTo()) > 0.1 && !player.hasPermission("joinprotection.bypass.cancel-on-move")) {
             Location joinLocation = protectionHandler.getLocation(player);
-            boolean shouldCancel = joinProtection.getConfig().getBoolean("cancel.on-move");
-            double distance = joinProtection.getConfig().getDouble("cancel.distance");
+            Location playerLocation = player.getLocation();
 
-            if (shouldCancel && joinLocation.set(joinLocation.getX(), player.getLocation().getY(), joinLocation.getZ()).distance(player.getLocation()) >= distance) {
+            FileConfiguration config = joinProtection.getConfig();
+            boolean shouldCancel = config.getBoolean("cancel.on-move");
+            double distance = config.getDouble("cancel.distance");
+            double distanceSquared = distance * distance;
+            
+            if (shouldCancel && joinLocation.set(joinLocation.getX(), playerLocation.getY(), joinLocation.getZ()).distanceSquared(playerLocation) >= distanceSquared) {
                 protectionHandler.cancelProtection(player, "messages.protectionDeactivated");
             }
         }

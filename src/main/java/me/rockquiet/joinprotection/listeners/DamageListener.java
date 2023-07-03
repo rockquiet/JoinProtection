@@ -3,6 +3,7 @@ package me.rockquiet.joinprotection.listeners;
 import me.rockquiet.joinprotection.JoinProtection;
 import me.rockquiet.joinprotection.ProtectionHandler;
 import org.bukkit.Sound;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,14 +25,15 @@ public class DamageListener implements Listener {
 
     @EventHandler
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
-        if (joinProtection.getConfig().getBoolean("cancel.on-attack") && (event.getDamager() instanceof Player player) && protectionHandler.hasProtection(player) && !event.getDamager().hasPermission("joinprotection.bypass.cancel-on-attack")) {
+        FileConfiguration config = joinProtection.getConfig();
+        if (config.getBoolean("cancel.on-attack") && (event.getDamager() instanceof Player player) && protectionHandler.hasProtection(player) && !event.getDamager().hasPermission("joinprotection.bypass.cancel-on-attack")) {
             protectionHandler.cancelProtection(player, "messages.protectionDeactivatedAttack");
         }
 
-        if (joinProtection.getConfig().getBoolean("sound.enabled") && (event.getEntity() instanceof Player player) && protectionHandler.hasProtection(player) && (event.getDamager() instanceof Player attacker)) {
-            String sound = joinProtection.getConfig().getString("sound.type");
-            float volume = (float) joinProtection.getConfig().getDouble("sound.volume");
-            float pitch = (float) joinProtection.getConfig().getDouble("sound.pitch");
+        if (config.getBoolean("sound.enabled") && (event.getEntity() instanceof Player player) && protectionHandler.hasProtection(player) && (event.getDamager() instanceof Player attacker)) {
+            String sound = config.getString("sound.type");
+            float volume = (float) config.getDouble("sound.volume");
+            float pitch = (float) config.getDouble("sound.pitch");
 
             attacker.playSound(player, Sound.valueOf(sound), volume, pitch);
         }
@@ -43,9 +45,7 @@ public class DamageListener implements Listener {
 
     @EventHandler
     public void onDamageByBlock(EntityDamageByBlockEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
+        if (!(event.getEntity() instanceof Player player)) return;
 
         if (protectionHandler.isEventCancelled(player, "modules.disable_damage_by_blocks")) {
             event.setCancelled(true);
@@ -54,9 +54,7 @@ public class DamageListener implements Listener {
 
     @EventHandler
     public void onDamageByBlock(EntityDamageEvent event) {
-        if (!(event.getEntity() instanceof Player player)) {
-            return;
-        }
+        if (!(event.getEntity() instanceof Player player)) return;
 
         if (protectionHandler.isEventCancelled(player, "modules.disable_damage")) {
             event.setCancelled(true);
@@ -66,9 +64,7 @@ public class DamageListener implements Listener {
 
     @EventHandler
     public void onEntityTargetPlayer(EntityTargetEvent event) {
-        if (!(event.getTarget() instanceof Player player)) {
-            return;
-        }
+        if (!(event.getTarget() instanceof Player player)) return;
 
         if (protectionHandler.isEventCancelled(player, "modules.disable_entity_targeting")) {
             event.setCancelled(true);

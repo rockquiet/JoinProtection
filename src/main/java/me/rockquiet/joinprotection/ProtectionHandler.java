@@ -37,7 +37,8 @@ public class ProtectionHandler implements Listener {
 
         AtomicInteger bonusTime = new AtomicInteger();
         player.getEffectivePermissions().stream()
-                .filter(permissionAttachmentInfo -> permissionAttachmentInfo.getPermission().startsWith("joinprotection.plus-")).map(permissionAttachmentInfo -> {
+                .filter(permissionAttachmentInfo -> permissionAttachmentInfo.getPermission().startsWith("joinprotection.plus-"))
+                .map(permissionAttachmentInfo -> {
                     String permission = permissionAttachmentInfo.getPermission();
                     String[] segments = permission.split("-");
                     return Integer.parseInt(segments[segments.length - 1]);
@@ -130,12 +131,9 @@ public class ProtectionHandler implements Listener {
     }
 
     public void cancelProtectionIfEnabled(Player player, String permission, String cancelOn, String messageOnCancel) {
-        if (invinciblePlayers.containsKey(player.getUniqueId()) && !player.hasPermission(permission)) {
-            boolean shouldCancel = (joinProtection.getConfig().contains(cancelOn) && joinProtection.getConfig().getBoolean(cancelOn));
-
-            if (shouldCancel) {
-                cancelProtection(player, messageOnCancel);
-            }
+        FileConfiguration config = joinProtection.getConfig();
+        if (invinciblePlayers.containsKey(player.getUniqueId()) && !player.hasPermission(permission) && config.contains(cancelOn) && config.getBoolean(cancelOn)) {
+            cancelProtection(player, messageOnCancel);
         }
     }
 
@@ -146,7 +144,8 @@ public class ProtectionHandler implements Listener {
     }
 
     public boolean isEventCancelled(Player player, String module) {
-        return joinProtection.getConfig().contains(module) && joinProtection.getConfig().getBoolean(module) && invinciblePlayers.containsKey(player.getUniqueId());
+        FileConfiguration config = joinProtection.getConfig();
+        return config.contains(module) && config.getBoolean(module) && hasProtection(player);
     }
 
     // clear map
