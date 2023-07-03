@@ -1,5 +1,6 @@
 package me.rockquiet.joinprotection;
 
+import com.tchristofferson.configupdater.ConfigUpdater;
 import me.rockquiet.joinprotection.commands.JoinProtectionCommand;
 import me.rockquiet.joinprotection.commands.TabComplete;
 import me.rockquiet.joinprotection.listeners.BlockListener;
@@ -10,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.io.IOException;
 
 public class JoinProtection extends JavaPlugin {
@@ -23,9 +25,11 @@ public class JoinProtection extends JavaPlugin {
         }
 
         saveDefaultConfig();
-
-        getConfig().addDefault("cancel.on-block-interact", false);
-        getConfig().options().copyDefaults(true);
+        try {
+            ConfigUpdater.update(this, "config.yml", new File(getDataFolder(), "config.yml"));
+        } catch (IOException e) {
+            getLogger().warning("Unable to update the config.yml: " + e);
+        }
         saveConfig();
 
         MessageManager messageManager = new MessageManager();
