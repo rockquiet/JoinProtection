@@ -1,7 +1,7 @@
 <div align="center">
 
-[![Modrinth Downloads](https://img.shields.io/modrinth/dt/joinprotection?logo=modrinth&style=for-the-badge)](https://modrinth.com/plugin/joinprotection)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/rockquiet/joinprotection?style=for-the-badge&logo=github)](https://github.com/rockquiet/JoinProtection/releases)
+[![Modrinth Downloads](https://img.shields.io/modrinth/dt/joinprotection?style=for-the-badge&logo=modrinth&labelColor=29355F&color=009B98)](https://modrinth.com/plugin/joinprotection)
+[![GitHub release (with filter)](https://img.shields.io/github/v/release/rockquiet/joinprotection?style=for-the-badge&logo=github&labelColor=29355F&color=009B98)](https://github.com/rockquiet/JoinProtection/releases)
 
 # JoinProtection
 
@@ -55,5 +55,6 @@ Plugin jars are available in the [Releases](https://github.com/rockquiet/JoinPro
 on [Modrinth](https://modrinth.com/plugin/joinprotection)
 and [Hangar](https://hangar.papermc.io/rockquiet/JoinProtection).
 
-[![modrinth](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@2/assets/cozy/available/modrinth_64h.png)](https://modrinth.com/plugin/joinprotection)
-[![hangar](https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_64h.png)](https://hangar.papermc.io/rockquiet/JoinProtection)
+[<img alt="github" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg">](https://github.com/rockquiet/JoinProtection/releases)
+[<img alt="modrinth" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg">](https://modrinth.com/plugin/joinprotection)
+[<img alt="hangar" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg">](https://hangar.papermc.io/rockquiet/JoinProtection)
