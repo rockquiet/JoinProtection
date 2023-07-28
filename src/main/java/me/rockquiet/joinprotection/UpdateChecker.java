@@ -12,36 +12,41 @@ import java.net.URL;
 
 public class UpdateChecker {
 
-    public UpdateChecker(JoinProtection plugin) throws IOException {
-        URL obj = new URL("https://api.github.com/repos/rockquiet/joinprotection/releases/latest");
-        HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-        con.setRequestMethod("GET");
-        con.setRequestProperty("User-Agent", "Mozilla/5.0");
+    public UpdateChecker(JoinProtection plugin) {
+        try {
+            URL obj = new URL("https://api.github.com/repos/rockquiet/joinprotection/releases/latest");
+            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+            con.setRequestMethod("GET");
+            con.setRequestProperty("User-Agent", "Mozilla/5.0");
 
-        if (con.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            plugin.getLogger().warning("Unable to check for updates...");
-            return;
-        }
+            if (con.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                plugin.getLogger().warning("Unable to check for updates...");
+                return;
+            }
 
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
 
-        String line;
-        StringBuilder response = new StringBuilder();
-        while ((line = bufferedReader.readLine()) != null) {
-            response.append(line);
-        }
-        bufferedReader.close();
+            String line;
+            StringBuilder response = new StringBuilder();
+            while ((line = bufferedReader.readLine()) != null) {
+                response.append(line);
+            }
+            bufferedReader.close();
+            con.disconnect();
 
-        JsonObject jsonResponse = new Gson().fromJson(response.toString(), JsonObject.class);
+            JsonObject jsonResponse = new Gson().fromJson(response.toString(), JsonObject.class);
 
-        Version latest = Version.parse(jsonResponse.get("tag_name").getAsString().replaceFirst("^v", ""));
-        Version current = Version.parse(plugin.getDescription().getVersion());
-        int compare = latest.compareTo(current);
+            Version latest = Version.parse(jsonResponse.get("tag_name").getAsString().replaceFirst("^v", ""));
+            Version current = Version.parse(plugin.getDescription().getVersion());
+            int compare = latest.compareTo(current);
 
-        if (compare > 0) {
-            plugin.getLogger().info("An update is available! Latest version: " + latest + ", you are using: " + current);
-        } else if (compare < 0) {
-            plugin.getLogger().warning("You are running a newer version of the plugin than released. If you are using a development build, please report any bugs on the project's GitHub.");
+            if (compare > 0) {
+                plugin.getLogger().info("An update is available! Latest version: " + latest + ", you are using: " + current);
+            } else if (compare < 0) {
+                plugin.getLogger().warning("You are running a newer version of the plugin than released. If you are using a development build, please report any bugs on the project's GitHub.");
+            }
+        } catch (IOException e) {
+            plugin.getLogger().warning("Unable to check for updates: " + e.getMessage());
         }
     }
 }

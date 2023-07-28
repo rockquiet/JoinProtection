@@ -51,14 +51,14 @@ public class ProtectionHandler implements Listener {
 
             @Override
             public void run() {
-                if (ProtectionHandler.invinciblePlayers.containsKey(uuid)) {
+                if (hasProtection(uuid)) {
                     // runs until timer reached 1
                     if (timeRemaining <= protectionTime && timeRemaining >= 1) {
                         messageManager.sendActionbar(config, player, "messages.timeRemaining", "%time%", String.valueOf(timeRemaining));
                     }
                     // runs once
                     if (timeRemaining == 0) {
-                        ProtectionHandler.invinciblePlayers.remove(uuid);
+                        invinciblePlayers.remove(uuid);
                         cancel();
                         messageManager.sendActionbar(config, player, "messages.protectionEnded");
                     }
@@ -79,14 +79,15 @@ public class ProtectionHandler implements Listener {
         if (joinProtection.getServer().getAverageTickTime() >= config.getDouble("particles.maximum-mspt")) return;
 
         new BukkitRunnable() {
-            final String particle = config.getString("particles.type");
+            final Particle particle = Particle.valueOf(config.getString("particles.type"));
             final int particleAmount = config.getInt("particles.amount");
             final double circles = config.getLong("particles.circles");
+            final UUID playerUUID = player.getUniqueId();
             final World world = player.getWorld();
 
             @Override
             public void run() {
-                if (invinciblePlayers.containsKey(player.getUniqueId())) {
+                if (hasProtection(playerUUID)) {
                     Location location = player.getLocation().add(0, 1.5, 0);
 
                     for (double i = 0; i <= Math.PI; i += Math.PI / circles) { // 10 being the amount of circles.
@@ -96,7 +97,7 @@ public class ProtectionHandler implements Listener {
                             double x = Math.cos(a) * radius;
                             double z = Math.sin(a) * radius;
                             location.add(x, y, z);
-                            world.spawnParticle(Particle.valueOf(particle), location, particleAmount);
+                            world.spawnParticle(particle, location, particleAmount);
                             location.subtract(x, y, z);
                         }
                     }
@@ -119,13 +120,13 @@ public class ProtectionHandler implements Listener {
         };
     }
 
-    public boolean hasProtection(Player player) {
-        return invinciblePlayers.containsKey(player.getUniqueId());
+    public boolean hasProtection(UUID playerUUID) {
+        return invinciblePlayers.containsKey(playerUUID);
     }
 
-    public Location getLocation(Player player) {
-        if (hasProtection(player)) {
-            return invinciblePlayers.get(player.getUniqueId());
+    public Location getLocation(UUID playerUUID) {
+        if (hasProtection(playerUUID)) {
+            return invinciblePlayers.get(playerUUID);
         }
         return null;
     }
@@ -143,9 +144,9 @@ public class ProtectionHandler implements Listener {
         messageManager.sendActionbar(joinProtection.getConfig(), player, messageOnCancel);
     }
 
-    public boolean isEventCancelled(Player player, String module) {
+    public boolean isEventCancelled(UUID playerUUID, String module) {
         FileConfiguration config = joinProtection.getConfig();
-        return config.contains(module) && config.getBoolean(module) && hasProtection(player);
+        return config.contains(module) && config.getBoolean(module) && hasProtection(playerUUID);
     }
 
     // clear map

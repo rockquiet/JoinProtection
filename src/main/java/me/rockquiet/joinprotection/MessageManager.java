@@ -8,6 +8,12 @@ import org.bukkit.entity.Player;
 
 public class MessageManager {
 
+    private final MiniMessage msg;
+
+    public MessageManager() {
+        this.msg = MiniMessage.miniMessage();
+    }
+
     public boolean messageEmpty(FileConfiguration config, String messagePath) {
         return !config.contains(messagePath) || config.getString(messagePath).isBlank();
     }
@@ -19,24 +25,24 @@ public class MessageManager {
     public void sendMessage(FileConfiguration config, CommandSender sender, String messagePath) {
         if (messageEmpty(config, messagePath)) return;
 
-        sender.sendMessage(MiniMessage.miniMessage().deserialize(messageWithPrefix(config, messagePath)));
+        sender.sendMessage(msg.deserialize(messageWithPrefix(config, messagePath)));
     }
 
     public void sendMessage(FileConfiguration config, CommandSender sender, String messagePath, String placeholder, String replacePlaceholder) {
         if (messageEmpty(config, messagePath)) return;
 
-        sender.sendMessage(MiniMessage.miniMessage().deserialize(StringUtils.replace(messageWithPrefix(config, messagePath), placeholder, replacePlaceholder)));
+        sender.sendMessage(msg.deserialize(StringUtils.replace(messageWithPrefix(config, messagePath), placeholder, replacePlaceholder)));
     }
 
     public void sendActionbar(FileConfiguration config, Player player, String messagePath) {
         if (messageEmpty(config, messagePath)) return;
 
-        player.sendActionBar(MiniMessage.miniMessage().deserialize(messageWithPrefix(config, messagePath)));
+        player.sendActionBar(msg.deserialize(messageWithPrefix(config, messagePath)));
     }
 
     public void sendActionbar(FileConfiguration config, Player player, String messagePath, String placeholder, String replacePlaceholder) {
         if (messageEmpty(config, messagePath)) return;
 
-        player.sendActionBar(MiniMessage.miniMessage().deserialize(StringUtils.replace(messageWithPrefix(config, messagePath), placeholder, replacePlaceholder)));
+        player.sendActionBar(msg.deserialize(StringUtils.replace(messageWithPrefix(config, messagePath), placeholder, replacePlaceholder)));
     }
 }
