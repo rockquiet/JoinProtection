@@ -13,13 +13,28 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class JoinProtection extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (Integer.parseInt(Bukkit.getBukkitVersion().split("\\.")[1].replace("-R0", "")) <= 18 && !Bukkit.getBukkitVersion().contains("1.18.2")) {
-            getLogger().warning("You are running an incompatible server version. Please consider updating to 1.18.2 or newer.");
+        // check if server is based on paper
+        if (Arrays.stream(Package.getPackages()).noneMatch(aPackage -> aPackage.getName().contains("io.papermc"))) {
+            getLogger().warning("======================================================");
+            getLogger().warning(" You are running incompatible server software.");
+            getLogger().warning(" Please consider using Paper as your server software.");
+            getLogger().warning("======================================================");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        // check if server version is 1.18.1 or below
+        String bukkitVersion = Bukkit.getBukkitVersion();
+        if (Integer.parseInt(bukkitVersion.split("\\.")[1].replace("-R0", "")) <= 18 && !bukkitVersion.contains("1.18.2")) {
+            getLogger().warning("=================================================");
+            getLogger().warning(" You are running an incompatible server version.");
+            getLogger().warning(" Please consider updating to 1.18.2 or newer.");
+            getLogger().warning("=================================================");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
