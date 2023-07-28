@@ -56,6 +56,7 @@ public class JoinProtection extends JavaPlugin {
         pluginManager.registerEvents(new DamageListener(this, protectionHandler), this);
         pluginManager.registerEvents(new MoveListener(this, protectionHandler), this);
         pluginManager.registerEvents(new BlockListener(protectionHandler), this);
+        pluginManager.registerEvents(new InventoryListener(protectionHandler), this);
 
         getCommand("joinprotection").setExecutor(new JoinProtectionCommand(this, messageManager));
         getCommand("joinprotection").setTabCompleter(new TabComplete());

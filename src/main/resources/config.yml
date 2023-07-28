@@ -35,6 +35,10 @@ modules:
   disable_damage: false
   # ...targeted by an entity
   disable_entity_targeting: true
+  # do not allow the player to drop items
+  disable-item-drops: false
+  # do not allow the player to pickup items
+  disable-item-pickup: false
 
 # particle aura around player with active join protection
 particles:
