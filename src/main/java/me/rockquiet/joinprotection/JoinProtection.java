@@ -3,10 +3,9 @@ package me.rockquiet.joinprotection;
 import com.tchristofferson.configupdater.ConfigUpdater;
 import me.rockquiet.joinprotection.commands.JoinProtectionCommand;
 import me.rockquiet.joinprotection.commands.TabComplete;
-import me.rockquiet.joinprotection.listeners.BlockListener;
-import me.rockquiet.joinprotection.listeners.DamageListener;
-import me.rockquiet.joinprotection.listeners.JoinListener;
-import me.rockquiet.joinprotection.listeners.MoveListener;
+import me.rockquiet.joinprotection.listeners.*;
+import org.bstats.bukkit.Metrics;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -61,12 +60,13 @@ public class JoinProtection extends JavaPlugin {
         getCommand("joinprotection").setExecutor(new JoinProtectionCommand(this, messageManager));
         getCommand("joinprotection").setTabCompleter(new TabComplete());
 
-        if (getConfig().getBoolean("plugin.update-checks")) {
-            try {
-                new UpdateChecker(this);
-            } catch (IOException e) {
-                getLogger().warning("Unable to check for updates: " + e.getMessage());
-            }
+        boolean updateChecks = getConfig().getBoolean("plugin.update-checks");
+
+        Metrics metrics = new Metrics(this, 19289);
+        metrics.addCustomChart(new SimplePie("update_checks", () -> String.valueOf(updateChecks)));
+
+        if (updateChecks) {
+            new UpdateChecker(this);
         }
     }
 }

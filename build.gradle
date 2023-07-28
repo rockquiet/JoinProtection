@@ -18,6 +18,7 @@ repositories {
 dependencies {
     compileOnly "io.papermc.paper:paper-api:1.20-R0.1-SNAPSHOT"
     implementation 'com.tchristofferson:ConfigUpdater:2.1-SNAPSHOT'
+    implementation 'org.bstats:bstats-bukkit:3.0.2'
 }
 
 def targetJavaVersion = 17
@@ -50,4 +51,5 @@ shadowJar {
         exclude 'org/intellij/lang/annotations/*'
         exclude 'org/jetbrains/annotations/*'
     }
+    relocate('org.bstats', 'me.rockquiet.joinprotection.utils.bstats')
 }
