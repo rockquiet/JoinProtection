@@ -20,17 +20,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProtectionHandler implements Listener {
 
     public static final Map<UUID, Location> invinciblePlayers = new HashMap<>();
-    private final JoinProtection joinProtection;
+    private final JoinProtection plugin;
     private final MessageManager messageManager;
 
     public ProtectionHandler(JoinProtection joinProtection,
                              MessageManager messageManager) {
-        this.joinProtection = joinProtection;
+        this.plugin = joinProtection;
         this.messageManager = messageManager;
     }
 
     public void startProtection(Player player) {
-        FileConfiguration config = joinProtection.getConfig();
+        FileConfiguration config = plugin.getConfig();
         UUID uuid = player.getUniqueId();
 
         invinciblePlayers.put(uuid, player.getLocation());
@@ -51,14 +51,14 @@ public class ProtectionHandler implements Listener {
 
             @Override
             public void run() {
-                if (ProtectionHandler.invinciblePlayers.containsKey(uuid)) {
+                if (hasProtection(uuid)) {
                     // runs until timer reached 1
                     if (timeRemaining <= protectionTime && timeRemaining >= 1) {
                         messageManager.sendActionbar(config, player, "messages.timeRemaining", "%time%", String.valueOf(timeRemaining));
                     }
                     // runs once
                     if (timeRemaining == 0) {
-                        ProtectionHandler.invinciblePlayers.remove(uuid);
+                        invinciblePlayers.remove(uuid);
                         cancel();
                         messageManager.sendActionbar(config, player, "messages.protectionEnded");
                     }
@@ -67,26 +67,27 @@ public class ProtectionHandler implements Listener {
                     cancel();
                 }
             }
-        }.runTaskTimerAsynchronously(joinProtection, 0, 20);
+        }.runTaskTimerAsynchronously(plugin, 0, 20);
 
         spawnParticles(player);
     }
 
     private void spawnParticles(Player player) {
-        FileConfiguration config = joinProtection.getConfig();
+        FileConfiguration config = plugin.getConfig();
         if (!config.getBoolean("particles.enabled")) return;
 
-        if (joinProtection.getServer().getAverageTickTime() >= config.getDouble("particles.maximum-mspt")) return;
+        if (plugin.getServer().getAverageTickTime() >= config.getDouble("particles.maximum-mspt")) return;
 
         new BukkitRunnable() {
-            final String particle = config.getString("particles.type");
+            final Particle particle = Particle.valueOf(config.getString("particles.type"));
             final int particleAmount = config.getInt("particles.amount");
             final double circles = config.getLong("particles.circles");
+            final UUID playerUUID = player.getUniqueId();
             final World world = player.getWorld();
 
             @Override
             public void run() {
-                if (invinciblePlayers.containsKey(player.getUniqueId())) {
+                if (hasProtection(playerUUID)) {
                     Location location = player.getLocation().add(0, 1.5, 0);
 
                     for (double i = 0; i <= Math.PI; i += Math.PI / circles) { // 10 being the amount of circles.
@@ -96,7 +97,7 @@ public class ProtectionHandler implements Listener {
                             double x = Math.cos(a) * radius;
                             double z = Math.sin(a) * radius;
                             location.add(x, y, z);
-                            world.spawnParticle(Particle.valueOf(particle), location, particleAmount);
+                            world.spawnParticle(particle, location, particleAmount);
                             location.subtract(x, y, z);
                         }
                     }
@@ -104,11 +105,11 @@ public class ProtectionHandler implements Listener {
                     cancel();
                 }
             }
-        }.runTaskTimer(joinProtection, 0, config.getLong("particles.refresh-rate"));
+        }.runTaskTimer(plugin, 0, config.getLong("particles.refresh-rate"));
     }
 
     public boolean isEnabledInWorld(World world) {
-        FileConfiguration config = joinProtection.getConfig();
+        FileConfiguration config = plugin.getConfig();
         List<String> worldList = config.getStringList("plugin.world-list");
         String worldName = world.getName();
 
@@ -119,19 +120,19 @@ public class ProtectionHandler implements Listener {
         };
     }
 
-    public boolean hasProtection(Player player) {
-        return invinciblePlayers.containsKey(player.getUniqueId());
+    public boolean hasProtection(UUID playerUUID) {
+        return invinciblePlayers.containsKey(playerUUID);
     }
 
-    public Location getLocation(Player player) {
-        if (hasProtection(player)) {
-            return invinciblePlayers.get(player.getUniqueId());
+    public Location getLocation(UUID playerUUID) {
+        if (hasProtection(playerUUID)) {
+            return invinciblePlayers.get(playerUUID);
         }
         return null;
     }
 
     public void cancelProtectionIfEnabled(Player player, String permission, String cancelOn, String messageOnCancel) {
-        FileConfiguration config = joinProtection.getConfig();
+        FileConfiguration config = plugin.getConfig();
         if (invinciblePlayers.containsKey(player.getUniqueId()) && !player.hasPermission(permission) && config.contains(cancelOn) && config.getBoolean(cancelOn)) {
             cancelProtection(player, messageOnCancel);
         }
@@ -140,12 +141,12 @@ public class ProtectionHandler implements Listener {
     public void cancelProtection(Player player, String messageOnCancel) {
         invinciblePlayers.remove(player.getUniqueId());
 
-        messageManager.sendActionbar(joinProtection.getConfig(), player, messageOnCancel);
+        messageManager.sendActionbar(plugin.getConfig(), player, messageOnCancel);
     }
 
-    public boolean isEventCancelled(Player player, String module) {
-        FileConfiguration config = joinProtection.getConfig();
-        return config.contains(module) && config.getBoolean(module) && hasProtection(player);
+    public boolean isEventCancelled(UUID playerUUID, String module) {
+        FileConfiguration config = plugin.getConfig();
+        return config.contains(module) && config.getBoolean(module) && hasProtection(playerUUID);
     }
 
     // clear map

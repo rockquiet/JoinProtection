@@ -11,12 +11,12 @@ import org.jetbrains.annotations.NotNull;
 
 public class JoinProtectionCommand implements CommandExecutor {
 
-    private final JoinProtection joinProtection;
+    private final JoinProtection plugin;
     private final MessageManager messageManager;
 
     public JoinProtectionCommand(JoinProtection joinProtection,
                                  MessageManager messageManager) {
-        this.joinProtection = joinProtection;
+        this.plugin = joinProtection;
         this.messageManager = messageManager;
     }
 
@@ -26,14 +26,14 @@ public class JoinProtectionCommand implements CommandExecutor {
             return false;
         }
 
-        FileConfiguration config = joinProtection.getConfig();
+        FileConfiguration config = plugin.getConfig();
 
         if ((sender instanceof Player player) && !player.hasPermission("joinprotection.reload")) {
             messageManager.sendMessage(config, player, "messages.noPerms");
             return false;
         }
 
-        joinProtection.reloadConfig();
+        plugin.reloadConfig();
         messageManager.sendMessage(config, sender, "messages.reload");
         return false;
     }
