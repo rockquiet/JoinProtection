@@ -18,7 +18,9 @@ public class JoinListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (!player.hasPermission("joinprotection.use") || !protectionHandler.isEnabledInWorld(player.getWorld()) && !player.hasPermission("joinprotection.bypass.world-list")) {
+        if (!player.hasPermission("joinprotection.use")) return;
+
+        if (!protectionHandler.isEnabledInWorld(player.getWorld()) && !player.hasPermission("joinprotection.bypass.world-list")) {
             return;
         }
 

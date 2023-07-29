@@ -13,32 +13,35 @@ import java.util.UUID;
 
 public class MoveListener implements Listener {
 
-    private final JoinProtection joinProtection;
+    private final JoinProtection plugin;
     private final ProtectionHandler protectionHandler;
 
     public MoveListener(JoinProtection joinProtection,
                         ProtectionHandler protectionHandler) {
-        this.joinProtection = joinProtection;
+        this.plugin = joinProtection;
         this.protectionHandler = protectionHandler;
     }
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
+        if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
+
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
 
-        if (protectionHandler.hasProtection(playerUUID) && event.getFrom().distanceSquared(event.getTo()) > 0.01 && !player.hasPermission("joinprotection.bypass.cancel-on-move")) {
-            Location joinLocation = protectionHandler.getLocation(playerUUID);
-            Location playerLocation = player.getLocation();
+        if (player.hasPermission("joinprotection.bypass.cancel-on-move")) return;
+        if (!protectionHandler.hasProtection(playerUUID)) return;
 
-            FileConfiguration config = joinProtection.getConfig();
-            boolean shouldCancel = config.getBoolean("cancel.on-move");
-            double distance = config.getDouble("cancel.distance");
-            double distanceSquared = distance * distance;
+        FileConfiguration config = plugin.getConfig();
+        if (!config.getBoolean("cancel.on-move")) return;
 
-            if (shouldCancel && joinLocation.set(joinLocation.getX(), playerLocation.getY(), joinLocation.getZ()).distanceSquared(playerLocation) >= distanceSquared) {
-                protectionHandler.cancelProtection(player, "messages.protectionDeactivated");
-            }
+        Location joinLocation = protectionHandler.getLocation(playerUUID);
+        Location playerLocation = player.getLocation();
+        double distance = config.getDouble("cancel.distance");
+        double distanceSquared = distance * distance;
+
+        if (joinLocation.set(joinLocation.getX(), playerLocation.getY(), joinLocation.getZ()).distanceSquared(playerLocation) >= distanceSquared) {
+            protectionHandler.cancelProtection(player, "messages.protectionDeactivated");
         }
     }
 }

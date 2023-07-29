@@ -14,18 +14,18 @@ import org.bukkit.event.entity.EntityTargetEvent;
 
 public class DamageListener implements Listener {
 
-    private final JoinProtection joinProtection;
+    private final JoinProtection plugin;
     private final ProtectionHandler protectionHandler;
 
     public DamageListener(JoinProtection joinProtection,
                           ProtectionHandler protectionHandler) {
-        this.joinProtection = joinProtection;
+        this.plugin = joinProtection;
         this.protectionHandler = protectionHandler;
     }
 
     @EventHandler
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
-        FileConfiguration config = joinProtection.getConfig();
+        FileConfiguration config = plugin.getConfig();
         if (config.getBoolean("cancel.on-attack") && (event.getDamager() instanceof Player player) && protectionHandler.hasProtection(player.getUniqueId()) && !player.hasPermission("joinprotection.bypass.cancel-on-attack")) {
             protectionHandler.cancelProtection(player, "messages.protectionDeactivatedAttack");
         }

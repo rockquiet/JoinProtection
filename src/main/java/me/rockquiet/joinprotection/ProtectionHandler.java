@@ -20,17 +20,17 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProtectionHandler implements Listener {
 
     public static final Map<UUID, Location> invinciblePlayers = new HashMap<>();
-    private final JoinProtection joinProtection;
+    private final JoinProtection plugin;
     private final MessageManager messageManager;
 
     public ProtectionHandler(JoinProtection joinProtection,
                              MessageManager messageManager) {
-        this.joinProtection = joinProtection;
+        this.plugin = joinProtection;
         this.messageManager = messageManager;
     }
 
     public void startProtection(Player player) {
-        FileConfiguration config = joinProtection.getConfig();
+        FileConfiguration config = plugin.getConfig();
         UUID uuid = player.getUniqueId();
 
         invinciblePlayers.put(uuid, player.getLocation());
@@ -67,16 +67,16 @@ public class ProtectionHandler implements Listener {
                     cancel();
                 }
             }
-        }.runTaskTimerAsynchronously(joinProtection, 0, 20);
+        }.runTaskTimerAsynchronously(plugin, 0, 20);
 
         spawnParticles(player);
     }
 
     private void spawnParticles(Player player) {
-        FileConfiguration config = joinProtection.getConfig();
+        FileConfiguration config = plugin.getConfig();
         if (!config.getBoolean("particles.enabled")) return;
 
-        if (joinProtection.getServer().getAverageTickTime() >= config.getDouble("particles.maximum-mspt")) return;
+        if (plugin.getServer().getAverageTickTime() >= config.getDouble("particles.maximum-mspt")) return;
 
         new BukkitRunnable() {
             final Particle particle = Particle.valueOf(config.getString("particles.type"));
@@ -105,11 +105,11 @@ public class ProtectionHandler implements Listener {
                     cancel();
                 }
             }
-        }.runTaskTimer(joinProtection, 0, config.getLong("particles.refresh-rate"));
+        }.runTaskTimer(plugin, 0, config.getLong("particles.refresh-rate"));
     }
 
     public boolean isEnabledInWorld(World world) {
-        FileConfiguration config = joinProtection.getConfig();
+        FileConfiguration config = plugin.getConfig();
         List<String> worldList = config.getStringList("plugin.world-list");
         String worldName = world.getName();
 
@@ -132,7 +132,7 @@ public class ProtectionHandler implements Listener {
     }
 
     public void cancelProtectionIfEnabled(Player player, String permission, String cancelOn, String messageOnCancel) {
-        FileConfiguration config = joinProtection.getConfig();
+        FileConfiguration config = plugin.getConfig();
         if (invinciblePlayers.containsKey(player.getUniqueId()) && !player.hasPermission(permission) && config.contains(cancelOn) && config.getBoolean(cancelOn)) {
             cancelProtection(player, messageOnCancel);
         }
@@ -141,11 +141,11 @@ public class ProtectionHandler implements Listener {
     public void cancelProtection(Player player, String messageOnCancel) {
         invinciblePlayers.remove(player.getUniqueId());
 
-        messageManager.sendActionbar(joinProtection.getConfig(), player, messageOnCancel);
+        messageManager.sendActionbar(plugin.getConfig(), player, messageOnCancel);
     }
 
     public boolean isEventCancelled(UUID playerUUID, String module) {
-        FileConfiguration config = joinProtection.getConfig();
+        FileConfiguration config = plugin.getConfig();
         return config.contains(module) && config.getBoolean(module) && hasProtection(playerUUID);
     }
 
