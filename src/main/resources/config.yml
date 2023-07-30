@@ -13,6 +13,8 @@ plugin:
   # protection time in seconds
   # add NUMBER amount of seconds to a player: joinprotection.plus-NUMBER
   protection-time: 10
+  # only give join protection to players who are joining for the first time.
+  first-join-only: false
 
 # cancel protection timer
 cancel:
