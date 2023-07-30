@@ -52,7 +52,7 @@ public class JoinProtection extends JavaPlugin {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(protectionHandler, this);
         pluginManager.registerEvents(new JoinListener(this, protectionHandler), this);
-        pluginManager.registerEvents(new DamageListener(this, protectionHandler), this);
+        pluginManager.registerEvents(new DamageListener(this, messageManager, protectionHandler), this);
         pluginManager.registerEvents(new MoveListener(this, protectionHandler), this);
         pluginManager.registerEvents(new BlockListener(protectionHandler), this);
         pluginManager.registerEvents(new InventoryListener(protectionHandler), this);
