@@ -20,7 +20,7 @@ plugin:
 cancel:
   # if attacking an entity
   on-attack: true
-  # if player moved
+  # if player moved (or changes their world)
   on-move: true
   # distance the player is allowed to move without cancelling (y-axis is ignored)
   distance: 3.0
