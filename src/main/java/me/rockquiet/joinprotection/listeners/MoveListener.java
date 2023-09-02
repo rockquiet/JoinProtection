@@ -40,7 +40,7 @@ public class MoveListener implements Listener {
         double distance = config.getDouble("cancel.distance");
         double distanceSquared = distance * distance;
 
-        if (joinLocation.set(joinLocation.getX(), playerLocation.getY(), joinLocation.getZ()).distanceSquared(playerLocation) >= distanceSquared) {
+        if (joinLocation.getWorld() != playerLocation.getWorld() || joinLocation.set(joinLocation.getX(), playerLocation.getY(), joinLocation.getZ()).distanceSquared(playerLocation) >= distanceSquared) {
             protectionHandler.cancelProtection(player, "messages.protectionDeactivated");
         }
     }
