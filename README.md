@@ -5,10 +5,10 @@
 [![GitHub Downloads](https://img.shields.io/github/downloads/rockquiet/joinprotection/total?style=for-the-badge&logo=github&labelColor=29355F&color=009B98)](https://github.com/rockquiet/JoinProtection/releases)
 [![GitHub release (with filter)](https://img.shields.io/github/v/release/rockquiet/joinprotection?style=for-the-badge&logo=github&labelColor=29355F&color=009B98)](https://github.com/rockquiet/JoinProtection/releases)
 
-<img alt="bukkit" height="48" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/bukkit_vector.svg">
-<img alt="spigot" height="48" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/spigot_vector.svg">
-<img alt="paper" height="48" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/paper_vector.svg">
-<img alt="purpur" height="48" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/purpur_vector.svg">
+<img alt="bukkit" height="50" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/bukkit_vector.svg">
+<img alt="spigot" height="50" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/unsupported/spigot_vector.svg">
+<img alt="paper" height="50" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/paper_vector.svg">
+<img alt="purpur" height="50" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/supported/purpur_vector.svg">
 
 # JoinProtection
 
@@ -63,3 +63,7 @@ and [Hangar](https://hangar.papermc.io/rockquiet/JoinProtection).
 [<img alt="github" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/github_vector.svg">](https://github.com/rockquiet/JoinProtection/releases)
 [<img alt="modrinth" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg">](https://modrinth.com/plugin/joinprotection)
 [<img alt="hangar" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg">](https://hangar.papermc.io/rockquiet/JoinProtection)
+
+***
+
+[<img alt="bstats" src="https://bstats.org/signatures/bukkit/JoinProtection.svg">](https://bstats.org/plugin/bukkit/JoinProtection)
