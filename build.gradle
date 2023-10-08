@@ -51,5 +51,6 @@ shadowJar {
         exclude 'org/intellij/lang/annotations/*'
         exclude 'org/jetbrains/annotations/*'
     }
+    relocate('com.tchristofferson', 'me.rockquiet.joinprotection.utils')
     relocate('org.bstats', 'me.rockquiet.joinprotection.utils.bstats')
 }
