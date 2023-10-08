@@ -78,3 +78,9 @@ messages:
   protectionDeactivated: "<gradient:#7287fd:#04a5e5>Join Protection</gradient> <dark_gray><b>»</b> <gradient:#e64553:#d20f39>Disabled!</gradient>"
   protectionDeactivatedAttack: "<gradient:#7287fd:#04a5e5>Join Protection</gradient> <dark_gray><b>»</b> <gradient:#e64553:#d20f39>Disabled because of your attack!</gradient>"
   cannotHurt: "%prefix% <gray>You cannot hurt <white>%player% <gray>while they have active protection."
+
+# Toggle/Configure integrations into other plugins here.
+integration:
+  # https://luckperms.net
+  luckperms:
+    enabled: true
