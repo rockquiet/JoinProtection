@@ -4,6 +4,7 @@ import me.rockquiet.joinprotection.JoinProtection;
 import me.rockquiet.joinprotection.ProtectionHandler;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -24,7 +25,7 @@ public class MoveListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        if (event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
+        if (!event.hasChangedPosition() || event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
 
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
@@ -34,6 +35,12 @@ public class MoveListener implements Listener {
 
         FileConfiguration config = plugin.getConfig();
         if (!config.getBoolean("cancel.on-move")) return;
+
+        // fix for player getting pushed by an entity
+        if (player.getNearbyEntities(0.5, 0.5, 0.5).stream().anyMatch(LivingEntity.class::isInstance)) {
+            player.teleport(event.getFrom());
+            return;
+        }
 
         Location joinLocation = protectionHandler.getLocation(playerUUID);
         Location playerLocation = player.getLocation();
