@@ -51,10 +51,7 @@ processResources {
 }
 
 shadowJar {
-    dependencies {
-        exclude 'org/intellij/lang/annotations/*'
-        exclude 'org/jetbrains/annotations/*'
-    }
-    relocate('com.tchristofferson', 'me.rockquiet.joinprotection.utils')
-    relocate('org.bstats', 'me.rockquiet.joinprotection.utils.bstats')
+    minimize()
+    enableRelocation = true
+    relocationPrefix = 'me.rockquiet.joinprotection.3rdparty'
 }
