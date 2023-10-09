@@ -64,7 +64,7 @@ public class JoinProtection extends JavaPlugin {
         getCommand("joinprotection").setTabCompleter(new TabComplete());
 
         // LuckPerms hook
-        if (getConfig().getBoolean("integration.luckperms") && Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
+        if (getConfig().getBoolean("integration.luckperms.enabled") && Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
             if (provider != null) {
                 LuckPerms api = provider.getProvider();
