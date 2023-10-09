@@ -34,6 +34,9 @@ A plugin that protects players from mobs and damage for a set period of time aft
 - Particles aura during active join protection
 - Play a sound to players trying to attack others with active join protection
 - Whitelist/Blacklist worlds to restrict the plugin's functionality
+- [PlaceholderAPI](https://www.spigotmc.org/resources/6245)
+  and [MiniPlaceholders](https://modrinth.com/plugin/miniplaceholders) support
+- [LuckPerms Context](https://luckperms.net/wiki/Context) support
 - Everything can be edited and disabled
 
 ## Commands & Permissions
@@ -54,6 +57,19 @@ A plugin that protects players from mobs and damage for a set period of time aft
 | `joinprotection.bypass.*`                        | false   | Grants all bypass permissions                           |
 | `joinprotection.*`                               | false   | Grants all permissions of the plugin                    |
 
+## Placeholders
+
+| [PlaceholderAPI](https://www.spigotmc.org/resources/6245) | [MiniPlaceholders](https://modrinth.com/plugin/miniplaceholders) | description                     |
+|-----------------------------------------------------------|------------------------------------------------------------------|---------------------------------|
+| `%joinprotection_status%`                                 | `<joinprotection_status>`                                        | Protection status of the player |
+
+## LuckPerms Context
+
+The plugin updates an `joinprotection` context for each player:\
+It can be either `true` (player is protected) or `false` (player is not protected).
+
+More information on how it works is available on the [LuckPerms Wiki](https://luckperms.net/wiki/Context).
+
 ## Download
 
 Plugin jars are available in the [Releases](https://github.com/rockquiet/JoinProtection/releases) section,
@@ -64,6 +80,10 @@ and [Hangar](https://hangar.papermc.io/rockquiet/JoinProtection).
 [<img alt="modrinth" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/modrinth_vector.svg">](https://modrinth.com/plugin/joinprotection)
 [<img alt="hangar" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/hangar_vector.svg">](https://hangar.papermc.io/rockquiet/JoinProtection)
 
-***
+## Metrics
+
+This plugin uses bStats to collect some (non-identifying) data about the servers it runs on.
+You can opt-out by editing the `config.yml` in the `/plugins/bStats` folder located in your server directory.
+(More information [here](https://bstats.org/getting-started))
 
 [<img alt="bstats" src="https://bstats.org/signatures/bukkit/JoinProtection.svg">](https://bstats.org/plugin/bukkit/JoinProtection)
