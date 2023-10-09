@@ -62,7 +62,7 @@ particles:
 # plays a sound to players attacking others with active join protection
 sound:
   enabled: true
-  # all sounds: https://www.andre601.ch/Spigot-Sounds/sounds
+  # all sounds: https://docs.andre601.ch/Spigot-Sounds/sounds
   type: ITEM_SHIELD_BLOCK
   # the volume of the sound
   volume: 0.8
