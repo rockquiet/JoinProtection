@@ -4,6 +4,8 @@ import com.tchristofferson.configupdater.ConfigUpdater;
 import me.rockquiet.joinprotection.commands.JoinProtectionCommand;
 import me.rockquiet.joinprotection.commands.TabComplete;
 import me.rockquiet.joinprotection.external.LuckPermsContext;
+import me.rockquiet.joinprotection.external.MiniPlaceholders;
+import me.rockquiet.joinprotection.external.PlaceholderApi;
 import me.rockquiet.joinprotection.listeners.*;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
@@ -63,6 +65,16 @@ public class JoinProtection extends JavaPlugin {
         getCommand("joinprotection").setExecutor(new JoinProtectionCommand(this, messageManager));
         getCommand("joinprotection").setTabCompleter(new TabComplete());
 
+        // PlaceholderAPI hook
+        if (getConfig().getBoolean("integration.placeholderapi.enabled") && Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new PlaceholderApi(this, protectionHandler).register();
+            getLogger().info("Hooked into PlaceholderAPI.");
+        }
+        // MiniPlaceholders hook
+        if (getConfig().getBoolean("integration.miniplaceholders.enabled") && Bukkit.getPluginManager().getPlugin("MiniPlaceholders") != null) {
+            new MiniPlaceholders(this, protectionHandler).registerExpansion();
+            getLogger().info("Hooked into MiniPlaceholders.");
+        }
         // LuckPerms hook
         if (getConfig().getBoolean("integration.luckperms.enabled") && Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);

@@ -81,6 +81,20 @@ messages:
 
 # Toggle/Configure integrations into other plugins here.
 integration:
+  # https://www.spigotmc.org/resources/placeholderapi.6245
+  placeholderapi:
+    enabled: true
+    # %joinprotection_status% - displays current protection status of the player
+    status:
+      not-protected: ""
+      protected: " &8| &7Protected"
+  # https://modrinth.com/plugin/miniplaceholders
+  miniplaceholders:
+    enabled: true
+    # <joinprotection_status> - displays current protection status of the player
+    status:
+      not-protected: ""
+      protected: " <dark_gray>| <gray>Protected"
   # https://luckperms.net
   luckperms:
     enabled: true
