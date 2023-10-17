@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProtectionHandler implements Listener {
 
-    public static final Map<UUID, Location> invinciblePlayers = new HashMap<>();
+    private static final Map<UUID, Location> invinciblePlayers = new HashMap<>();
     private final JoinProtection plugin;
     private final MessageManager messageManager;
 

@@ -7,9 +7,9 @@ import me.rockquiet.joinprotection.external.LuckPermsContext;
 import me.rockquiet.joinprotection.external.MiniPlaceholders;
 import me.rockquiet.joinprotection.external.PlaceholderApi;
 import me.rockquiet.joinprotection.listeners.*;
+import net.luckperms.api.LuckPerms;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
-import net.luckperms.api.LuckPerms;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -58,6 +58,7 @@ public class JoinProtection extends JavaPlugin {
         pluginManager.registerEvents(protectionHandler, this);
         pluginManager.registerEvents(new JoinListener(this, protectionHandler), this);
         pluginManager.registerEvents(new DamageListener(this, messageManager, protectionHandler), this);
+        pluginManager.registerEvents(new AttackListener(this, protectionHandler), this);
         pluginManager.registerEvents(new MoveListener(this, protectionHandler), this);
         pluginManager.registerEvents(new BlockListener(protectionHandler), this);
         pluginManager.registerEvents(new InventoryListener(protectionHandler), this);

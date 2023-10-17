@@ -30,11 +30,11 @@ public class JoinProtectionCommand implements CommandExecutor {
 
         if ((sender instanceof Player player) && !player.hasPermission("joinprotection.reload")) {
             messageManager.sendMessage(config, player, "messages.noPerms");
-            return false;
+            return true;
         }
 
         plugin.reloadConfig();
         messageManager.sendMessage(config, sender, "messages.reload");
-        return false;
+        return true;
     }
 }

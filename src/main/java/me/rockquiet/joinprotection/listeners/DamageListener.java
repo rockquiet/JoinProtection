@@ -13,6 +13,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 
+import java.util.UUID;
+
 public class DamageListener implements Listener {
 
     private final JoinProtection plugin;
@@ -29,12 +31,12 @@ public class DamageListener implements Listener {
 
     @EventHandler
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
-        FileConfiguration config = plugin.getConfig();
-        if (config.getBoolean("cancel.on-attack") && (event.getDamager() instanceof Player protectedPlayer) && protectionHandler.hasProtection(protectedPlayer.getUniqueId()) && !protectedPlayer.hasPermission("joinprotection.bypass.cancel-on-attack")) {
-            protectionHandler.cancelProtection(protectedPlayer, "messages.protectionDeactivatedAttack");
-        }
+        if (!(event.getEntity() instanceof Player protectedPlayer)) return;
+        UUID protectedPlayerUUID = protectedPlayer.getUniqueId();
 
-        if ((event.getEntity() instanceof Player protectedPlayer) && protectionHandler.hasProtection(protectedPlayer.getUniqueId()) && (event.getDamager() instanceof Player attacker)) {
+        if (protectionHandler.hasProtection(protectedPlayerUUID) && event.getDamager() instanceof Player attacker) {
+            FileConfiguration config = plugin.getConfig();
+
             messageManager.sendMessage(config, attacker, "messages.cannotHurt", "%player%", protectedPlayer.getName());
 
             if (config.getBoolean("sound.enabled")) {
@@ -46,7 +48,7 @@ public class DamageListener implements Listener {
             }
         }
 
-        if ((event.getEntity() instanceof Player protectedPlayer) && protectionHandler.isEventCancelled(protectedPlayer.getUniqueId(), "modules.disable_damage_by_entities")) {
+        if (protectionHandler.isEventCancelled(protectedPlayerUUID, "modules.disable_damage_by_entities")) {
             event.setCancelled(true);
         }
     }
