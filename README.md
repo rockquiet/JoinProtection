@@ -37,7 +37,7 @@ A plugin that protects players from mobs and damage for a set period of time aft
 - [PlaceholderAPI](https://www.spigotmc.org/resources/6245)
   and [MiniPlaceholders](https://modrinth.com/plugin/miniplaceholders) support
 - [LuckPerms Context](https://luckperms.net/wiki/Context) support
-- Everything can be edited and disabled
+- Everything can be edited, bypassed with permissions, or completely disabled
 
 ## Commands & Permissions
 
@@ -45,17 +45,17 @@ A plugin that protects players from mobs and damage for a set period of time aft
 |--------------------------|-------------------------|--------------------|
 | `/joinprotection reload` | `joinprotection.reload` | Reloads the config |
 
-| permission                                       | default | description                                             |
-|--------------------------------------------------|---------|---------------------------------------------------------|
-| `joinprotection.use`                             | true    | If the Player has join protection                       |
-| `joinprotection.reload`                          | op      | Allows the usage of `/joinprotection reload`            |
-| `joinprotection.plus-NUMBER`                     | false   | Extends the protection time by NUMBER amount of seconds |
-| `joinprotection.bypass.cancel-on-move`           | false   | Bypass the cancel on move option                        |
-| `joinprotection.bypass.cancel-on-attack`         | false   | Bypass the cancel on attack option                      |
-| `joinprotection.bypass.cancel-on-block-interact` | false   | Bypass the cancel on block interact option              |
-| `joinprotection.bypass.world-list`               | false   | Bypass the world-list option                            |
-| `joinprotection.bypass.*`                        | false   | Grants all bypass permissions                           |
-| `joinprotection.*`                               | false   | Grants all permissions of the plugin                    |
+| permission                                       | default | description                                                                                                                              |
+|--------------------------------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------|
+| `joinprotection.use`                             | true    | If the Player has join protection                                                                                                        |
+| `joinprotection.reload`                          | op      | Allows the usage of `/joinprotection reload`                                                                                             |
+| `joinprotection.plus-NUMBER`                     | false   | Extends the protection time by NUMBER amount of seconds<br/>(If a player has multiple permissions, only the highest value will be added) |
+| `joinprotection.bypass.cancel-on-move`           | false   | Bypass the cancel on move option                                                                                                         |
+| `joinprotection.bypass.cancel-on-attack`         | false   | Bypass the cancel on attack option                                                                                                       |
+| `joinprotection.bypass.cancel-on-block-interact` | false   | Bypass the cancel on block interact option                                                                                               |
+| `joinprotection.bypass.world-list`               | false   | Bypass the world-list option                                                                                                             |
+| `joinprotection.bypass.*`                        | false   | Grants all bypass permissions                                                                                                            |
+| `joinprotection.*`                               | false   | Grants all permissions of the plugin                                                                                                     |
 
 ## Placeholders
 
