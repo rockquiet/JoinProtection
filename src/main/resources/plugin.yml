@@ -5,9 +5,16 @@ description: Protects players from mobs and damage for a set period of time afte
 author: rockquiet
 # using 1.13 instead of 1.18 for the version check to work properly
 api-version: 1.13
+
+softdepend:
+  - PlaceholderAPI
+  - MiniPlaceholders
+  - LuckPerms
+
 commands:
   joinprotection:
     description: joinprotection command
+
 permissions:
   joinprotection.use:
     description: if the player has join protection
