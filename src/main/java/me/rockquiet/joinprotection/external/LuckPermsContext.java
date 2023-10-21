@@ -23,7 +23,7 @@ public class LuckPermsContext implements ContextCalculator<Player> {
         RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
         if (provider != null) {
             LuckPerms api = provider.getProvider();
-            api.getContextManager().registerCalculator(new LuckPermsContext(protectionHandler));
+            api.getContextManager().registerCalculator(this);
         }
     }
 
