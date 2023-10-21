@@ -7,12 +7,10 @@ import me.rockquiet.joinprotection.external.LuckPermsContext;
 import me.rockquiet.joinprotection.external.MiniPlaceholders;
 import me.rockquiet.joinprotection.external.PlaceholderApi;
 import me.rockquiet.joinprotection.listeners.*;
-import net.luckperms.api.LuckPerms;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -78,12 +76,8 @@ public class JoinProtection extends JavaPlugin {
         }
         // LuckPerms hook
         if (getConfig().getBoolean("integration.luckperms.enabled") && Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
-            RegisteredServiceProvider<LuckPerms> provider = Bukkit.getServicesManager().getRegistration(LuckPerms.class);
-            if (provider != null) {
-                LuckPerms api = provider.getProvider();
-                api.getContextManager().registerCalculator(new LuckPermsContext(protectionHandler));
-                getLogger().info("Hooked into LuckPerms.");
-            }
+            new LuckPermsContext(protectionHandler).register();
+            getLogger().info("Hooked into LuckPerms.");
         }
 
         boolean updateChecks = getConfig().getBoolean("plugin.update-checks");
