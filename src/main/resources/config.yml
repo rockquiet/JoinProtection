@@ -46,6 +46,7 @@ modules:
 particles:
   enabled: true
   # if the server MSPT take longer than this value, particles will no longer be displayed
+  # INFO: this is not supported on spigot servers
   maximum-mspt: 50.0
   # all particles: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
   # good looking particles / display duration:
