@@ -1,16 +1,17 @@
 package me.rockquiet.joinprotection;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import org.apache.commons.lang3.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 public class MessageManager {
 
+    private final JoinProtection plugin;
     private final MiniMessage msg;
 
-    public MessageManager() {
+    public MessageManager(JoinProtection plugin) {
+        this.plugin = plugin;
         this.msg = MiniMessage.miniMessage();
     }
 
@@ -19,30 +20,30 @@ public class MessageManager {
     }
 
     public String messageWithPrefix(FileConfiguration config, String messagePath) {
-        return StringUtils.replaceOnce(config.getString(messagePath), "%prefix%", config.getString("messages.prefix"));
+        return config.getString(messagePath).replaceFirst("%prefix%", config.getString("messages.prefix"));
     }
 
     public void sendMessage(FileConfiguration config, CommandSender sender, String messagePath) {
         if (messageEmpty(config, messagePath)) return;
 
-        sender.sendMessage(msg.deserialize(messageWithPrefix(config, messagePath)));
+        plugin.adventure().sender(sender).sendMessage(msg.deserialize(messageWithPrefix(config, messagePath)));
     }
 
     public void sendMessage(FileConfiguration config, CommandSender sender, String messagePath, String placeholder, String replacePlaceholder) {
         if (messageEmpty(config, messagePath)) return;
 
-        sender.sendMessage(msg.deserialize(StringUtils.replace(messageWithPrefix(config, messagePath), placeholder, replacePlaceholder)));
+        plugin.adventure().sender(sender).sendMessage(msg.deserialize(messageWithPrefix(config, messagePath).replace(placeholder, replacePlaceholder)));
     }
 
     public void sendActionbar(FileConfiguration config, Player player, String messagePath) {
         if (messageEmpty(config, messagePath)) return;
 
-        player.sendActionBar(msg.deserialize(messageWithPrefix(config, messagePath)));
+        plugin.adventure().player(player).sendActionBar(msg.deserialize(messageWithPrefix(config, messagePath)));
     }
 
     public void sendActionbar(FileConfiguration config, Player player, String messagePath, String placeholder, String replacePlaceholder) {
         if (messageEmpty(config, messagePath)) return;
 
-        player.sendActionBar(msg.deserialize(StringUtils.replace(messageWithPrefix(config, messagePath), placeholder, replacePlaceholder)));
+        plugin.adventure().player(player).sendActionBar(msg.deserialize(messageWithPrefix(config, messagePath).replace(placeholder, replacePlaceholder)));
     }
 }

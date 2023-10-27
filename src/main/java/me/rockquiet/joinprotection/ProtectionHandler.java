@@ -76,7 +76,9 @@ public class ProtectionHandler implements Listener {
         FileConfiguration config = plugin.getConfig();
         if (!config.getBoolean("particles.enabled")) return;
 
-        if (plugin.getServer().getAverageTickTime() >= config.getDouble("particles.maximum-mspt")) return;
+        if (plugin.isPaper() && plugin.getServer().getAverageTickTime() >= config.getDouble("particles.maximum-mspt")) {
+            return;
+        }
 
         new BukkitRunnable() {
             final Particle particle = Particle.valueOf(config.getString("particles.type"));
@@ -90,9 +92,9 @@ public class ProtectionHandler implements Listener {
                 if (hasProtection(playerUUID)) {
                     Location location = player.getLocation().add(0, 1.5, 0);
 
-                    for (double i = 0; i <= Math.PI; i += Math.PI / circles) { // 10 being the amount of circles.
-                        double radius = Math.sin(i); // we get the current radius
-                        double y = Math.cos(i); // we get the current y value.
+                    for (double i = 0; i <= Math.PI; i += Math.PI / circles) {
+                        double radius = Math.sin(i);
+                        double y = Math.cos(i);
                         for (double a = 0; a < Math.PI * 2; a += Math.PI / circles) {
                             double x = Math.cos(a) * radius;
                             double z = Math.sin(a) * radius;

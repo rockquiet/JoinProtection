@@ -25,7 +25,8 @@ public class MoveListener implements Listener {
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
-        if (!event.hasChangedPosition() || event.getFrom().distanceSquared(event.getTo()) < 0.01) return;
+        Location fromLocation = event.getFrom();
+        if (fromLocation.distanceSquared(event.getTo()) < 0.01) return;
 
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
@@ -38,16 +39,17 @@ public class MoveListener implements Listener {
 
         // fix for player getting pushed by an entity
         if (player.getNearbyEntities(0.5, 0.5, 0.5).stream().anyMatch(LivingEntity.class::isInstance)) {
-            player.teleport(event.getFrom());
+            player.teleport(fromLocation);
             return;
         }
 
         Location joinLocation = protectionHandler.getLocation(playerUUID);
         Location playerLocation = player.getLocation();
+        Location distanceCheckLocation = new Location(joinLocation.getWorld(), joinLocation.getX(), playerLocation.getY(), joinLocation.getZ());
         double distance = config.getDouble("cancel.distance");
         double distanceSquared = distance * distance;
 
-        if (joinLocation.getWorld() != playerLocation.getWorld() || joinLocation.set(joinLocation.getX(), playerLocation.getY(), joinLocation.getZ()).distanceSquared(playerLocation) >= distanceSquared) {
+        if (joinLocation.getWorld() != playerLocation.getWorld() || distanceCheckLocation.distanceSquared(playerLocation) >= distanceSquared) {
             protectionHandler.cancelProtection(player, "messages.protectionDeactivated");
         }
     }

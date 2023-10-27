@@ -9,9 +9,11 @@ import me.rockquiet.joinprotection.external.PlaceholderApi;
 import me.rockquiet.joinprotection.listeners.*;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,23 +21,21 @@ import java.util.Arrays;
 
 public class JoinProtection extends JavaPlugin {
 
+    private boolean isPaper = false;
+    private BukkitAudiences audiences;
+
     @Override
     public void onEnable() {
         // check if server is based on paper
-        if (Arrays.stream(Package.getPackages()).noneMatch(aPackage -> aPackage.getName().contains("io.papermc"))) {
-            getLogger().warning("======================================================");
-            getLogger().warning(" You are running incompatible server software.");
-            getLogger().warning(" Please consider using Paper as your server software.");
-            getLogger().warning("======================================================");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
+        if (Arrays.stream(Package.getPackages()).anyMatch(aPackage -> aPackage.getName().contains("io.papermc"))) {
+            isPaper = true;
         }
-        // check if server version is 1.18.1 or below
+        // check if server version is 1.17.1 or below
         String bukkitVersion = Bukkit.getBukkitVersion();
-        if (Integer.parseInt(bukkitVersion.split("\\.")[1].replace("-R0", "")) <= 18 && !bukkitVersion.contains("1.18.2")) {
+        if (Integer.parseInt(bukkitVersion.split("\\.")[1].replace("-R0", "")) <= 17 && !bukkitVersion.contains("1.17.1")) {
             getLogger().warning("=================================================");
             getLogger().warning(" You are running an incompatible server version.");
-            getLogger().warning(" Please consider updating to 1.18.2 or newer.");
+            getLogger().warning(" Please consider updating to 1.17.1 or newer.");
             getLogger().warning("=================================================");
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -49,7 +49,9 @@ public class JoinProtection extends JavaPlugin {
         }
         saveConfig();
 
-        MessageManager messageManager = new MessageManager();
+        this.audiences = BukkitAudiences.create(this);
+        MessageManager messageManager = new MessageManager(this);
+
         ProtectionHandler protectionHandler = new ProtectionHandler(this, messageManager);
 
         PluginManager pluginManager = Bukkit.getPluginManager();
@@ -57,9 +59,15 @@ public class JoinProtection extends JavaPlugin {
         pluginManager.registerEvents(new JoinListener(this, protectionHandler), this);
         pluginManager.registerEvents(new DamageListener(this, messageManager, protectionHandler), this);
         pluginManager.registerEvents(new AttackListener(this, protectionHandler), this);
-        pluginManager.registerEvents(new MoveListener(this, protectionHandler), this);
         pluginManager.registerEvents(new BlockListener(protectionHandler), this);
-        pluginManager.registerEvents(new InventoryListener(protectionHandler), this);
+        pluginManager.registerEvents(new ItemDropListener(protectionHandler), this);
+        if (isPaper()) {
+            pluginManager.registerEvents(new PaperMoveListener(this, protectionHandler), this);
+            pluginManager.registerEvents(new PaperItemPickupListener(protectionHandler), this);
+        } else {
+            pluginManager.registerEvents(new MoveListener(this, protectionHandler), this);
+            pluginManager.registerEvents(new ItemPickupListener(protectionHandler), this);
+        }
 
         getCommand("joinprotection").setExecutor(new JoinProtectionCommand(this, messageManager));
         getCommand("joinprotection").setTabCompleter(new TabComplete());
@@ -88,5 +96,24 @@ public class JoinProtection extends JavaPlugin {
         if (updateChecks) {
             new UpdateChecker(this);
         }
+    }
+
+    @Override
+    public void onDisable() {
+        if (this.audiences != null) {
+            this.audiences.close();
+            this.audiences = null;
+        }
+    }
+
+    public @NonNull BukkitAudiences adventure() {
+        if (this.audiences == null) {
+            throw new IllegalStateException("Tried to access Adventure when the plugin was disabled!");
+        }
+        return this.audiences;
+    }
+
+    public boolean isPaper() {
+        return isPaper;
     }
 }
