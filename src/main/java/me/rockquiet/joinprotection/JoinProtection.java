@@ -75,17 +75,17 @@ public class JoinProtection extends JavaPlugin {
         // PlaceholderAPI hook
         if (getConfig().getBoolean("integration.placeholderapi.enabled") && Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             new PlaceholderApi(this, protectionHandler).register();
-            getLogger().info("Hooked into PlaceholderAPI.");
+            getLogger().info("Enabled PlaceholderAPI integration");
         }
         // MiniPlaceholders hook
         if (getConfig().getBoolean("integration.miniplaceholders.enabled") && Bukkit.getPluginManager().getPlugin("MiniPlaceholders") != null) {
             new MiniPlaceholders(this, protectionHandler).registerExpansion();
-            getLogger().info("Hooked into MiniPlaceholders.");
+            getLogger().info("Enabled MiniPlaceholders integration");
         }
         // LuckPerms hook
         if (getConfig().getBoolean("integration.luckperms.enabled") && Bukkit.getPluginManager().getPlugin("LuckPerms") != null) {
             new LuckPermsContext(protectionHandler).register();
-            getLogger().info("Hooked into LuckPerms.");
+            getLogger().info("Registered LuckPerms context");
         }
 
         boolean updateChecks = getConfig().getBoolean("plugin.update-checks");
