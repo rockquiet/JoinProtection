@@ -159,6 +159,6 @@ public class ProtectionHandler implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        invinciblePlayers.remove(event.getPlayer().getUniqueId());
+        invinciblePlayers.remove(event.getEntity().getUniqueId());
     }
 }
