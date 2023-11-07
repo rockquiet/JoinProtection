@@ -1,52 +1,47 @@
 package me.rockquiet.joinprotection;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.module.ModuleDescriptor.Version;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 
 public class UpdateChecker {
 
+    @SuppressWarnings("deprecation")
     public UpdateChecker(JoinProtection plugin) {
-        try {
-            URL obj = new URL("https://api.github.com/repos/rockquiet/joinprotection/releases/latest");
-            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-            con.setRequestMethod("GET");
-            con.setRequestProperty("User-Agent", "Mozilla/5.0");
+        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+            try {
+                HttpClient client = HttpClient.newHttpClient();
 
-            if (con.getResponseCode() != HttpURLConnection.HTTP_OK) {
-                plugin.getLogger().warning("Unable to check for updates...");
-                return;
+                JsonObject jsonResponse = JsonParser.parseString(
+                        client.send(
+                                HttpRequest.newBuilder()
+                                        .uri(URI.create("https://api.github.com/repos/rockquiet/joinprotection/releases/latest"))
+                                        .timeout(Duration.ofSeconds(30))
+                                        .GET()
+                                        .build(),
+                                HttpResponse.BodyHandlers.ofString()
+                        ).body()
+                ).getAsJsonObject();
+
+                Version latest = Version.parse(jsonResponse.get("tag_name").getAsString().replaceFirst("^[Vv]", ""));
+                Version current = Version.parse(plugin.getDescription().getVersion());
+                int compare = latest.compareTo(current);
+
+                if (compare > 0) {
+                    plugin.getLogger().info("An update is available! Latest version: " + latest + ", you are using: " + current);
+                } else if (compare < 0) {
+                    plugin.getLogger().warning("You are running a newer version of the plugin than released. If you are using a development build, please report any bugs on the project's GitHub.");
+                }
+            } catch (IOException | InterruptedException e) {
+                plugin.getLogger().warning("Unable to check for updates.");
             }
-
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-
-            String line;
-            StringBuilder response = new StringBuilder();
-            while ((line = bufferedReader.readLine()) != null) {
-                response.append(line);
-            }
-            bufferedReader.close();
-            con.disconnect();
-
-            JsonObject jsonResponse = new Gson().fromJson(response.toString(), JsonObject.class);
-
-            Version latest = Version.parse(jsonResponse.get("tag_name").getAsString().replaceFirst("^[Vv]", ""));
-            Version current = Version.parse(plugin.getDescription().getVersion());
-            int compare = latest.compareTo(current);
-
-            if (compare > 0) {
-                plugin.getLogger().info("An update is available! Latest version: " + latest + ", you are using: " + current);
-            } else if (compare < 0) {
-                plugin.getLogger().warning("You are running a newer version of the plugin than released. If you are using a development build, please report any bugs on the project's GitHub.");
-            }
-        } catch (IOException e) {
-            plugin.getLogger().warning("Unable to check for updates: " + e.getMessage());
-        }
+        });
     }
 }
