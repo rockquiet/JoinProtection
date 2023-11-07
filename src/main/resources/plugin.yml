@@ -43,7 +43,7 @@ permissions:
       joinprotection.bypass.cancel-on-block-interact: true
       joinprotection.bypass.world-list: true
   joinprotection.*:
-    description: grants all joinprotection permissions
+    description: grants all permissions of the plugin
     default: false
     children:
       joinprotection.use: true
