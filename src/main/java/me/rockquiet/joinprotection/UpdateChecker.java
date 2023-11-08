@@ -17,12 +17,15 @@ public class UpdateChecker {
     public UpdateChecker(JoinProtection plugin) {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
+                String currentVersion = plugin.getDescription().getVersion();
+
                 HttpClient client = HttpClient.newHttpClient();
 
                 JsonObject jsonResponse = JsonParser.parseString(
                         client.send(
                                 HttpRequest.newBuilder()
                                         .uri(URI.create("https://api.github.com/repos/rockquiet/joinprotection/releases/latest"))
+                                        .setHeader("User-Agent", "JoinProtection " + currentVersion)
                                         .timeout(Duration.ofSeconds(30))
                                         .GET()
                                         .build(),
@@ -31,7 +34,7 @@ public class UpdateChecker {
                 ).getAsJsonObject();
 
                 Version latest = Version.parse(jsonResponse.get("tag_name").getAsString().replaceFirst("^[Vv]", ""));
-                Version current = Version.parse(plugin.getDescription().getVersion());
+                Version current = Version.parse(currentVersion);
                 int compare = latest.compareTo(current);
 
                 if (compare > 0) {
