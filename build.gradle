@@ -56,6 +56,7 @@ processResources {
 }
 
 shadowJar {
+    archiveClassifier = ''
     minimize()
     enableRelocation = true
     relocationPrefix = 'me.rockquiet.joinprotection.3rdparty'
