@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'xyz.jpenilla.run-paper' version "2.3.0"
 }
 
 group = 'me.rockquiet'
@@ -60,4 +61,24 @@ shadowJar {
     minimize()
     enableRelocation = true
     relocationPrefix = 'me.rockquiet.joinprotection.3rdparty'
+}
+
+tasks {
+    // Paper
+    runServer {
+        // Integration into other plugins
+        /*
+        downloadPlugins {
+            hangar("PlaceholderAPI", "2.11.6")
+            modrinth("MiniPlaceholders", "J2guR3GH") // 2.2.4
+            url("https://download.luckperms.net/1543/bukkit/loader/LuckPerms-Bukkit-5.4.130.jar")
+        }
+         */
+        minecraftVersion("1.20.6")
+    }
+    // Folia
+    runPaper.folia.registerTask()
+    runFolia {
+        minecraftVersion("1.20.6")
+    }
 }
