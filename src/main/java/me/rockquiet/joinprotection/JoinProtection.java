@@ -58,7 +58,7 @@ public class JoinProtection extends JavaPlugin {
         pluginManager.registerEvents(protectionHandler, this);
         pluginManager.registerEvents(new JoinListener(this, protectionHandler), this);
         pluginManager.registerEvents(new DamageListener(this, messageManager, protectionHandler), this);
-        pluginManager.registerEvents(new AttackListener(this, protectionHandler), this);
+        pluginManager.registerEvents(new AttackListener(protectionHandler), this);
         pluginManager.registerEvents(new BlockListener(protectionHandler), this);
         pluginManager.registerEvents(new ItemDropListener(protectionHandler), this);
         if (isPaper()) {
