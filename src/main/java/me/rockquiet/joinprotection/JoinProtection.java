@@ -11,13 +11,19 @@ import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 
 public class JoinProtection extends JavaPlugin {
 
@@ -41,13 +47,7 @@ public class JoinProtection extends JavaPlugin {
             return;
         }
 
-        saveDefaultConfig();
-        try {
-            ConfigUpdater.update(this, "config.yml", new File(getDataFolder(), "config.yml"));
-        } catch (IOException e) {
-            getLogger().warning("Unable to update the config.yml: " + e);
-        }
-        saveConfig();
+        initConfigFile();
 
         this.audiences = BukkitAudiences.create(this);
         MessageManager messageManager = new MessageManager(this);
@@ -97,6 +97,42 @@ public class JoinProtection extends JavaPlugin {
         if (updateChecks) {
             new UpdateChecker(this);
         }
+    }
+
+    private void initConfigFile() {
+        final Path dataFolder = Path.of(getDataFolder().getPath());
+        final Path configPath = dataFolder.resolve("config.yml");
+        // backup pre 2.0 config // TODO proper auto migration
+        if (Files.exists(configPath)) {
+            final FileConfiguration oldConfig = YamlConfiguration.loadConfiguration(configPath.toFile());
+
+            if (!oldConfig.contains("file-version")) {
+                getLogger().warning("==============================================");
+                getLogger().warning(" The structure of the config.yml has changed!");
+                getLogger().warning(" You will need to manually reconfigure it.");
+                getLogger().warning("==============================================");
+
+                final Path backupsPath = dataFolder.resolve("backups");
+                try {
+                    getLogger().info("Moving old config into the backups directory...");
+                    if (!Files.exists(backupsPath)) Files.createDirectory(backupsPath);
+                    // move old config
+                    final Path configBackupPath = backupsPath.resolve(new SimpleDateFormat("'config_'yyyyMMdd-HHmm'.yml'").format(new Date()));
+                    Files.move(configPath, configBackupPath);
+                } catch (IOException e) {
+                    getLogger().warning("Unable to backup old config: " + e);
+                }
+            }
+        }
+
+        // save config / update small changes
+        saveDefaultConfig();
+        try {
+            ConfigUpdater.update(this, "config.yml", new File(getDataFolder(), "config.yml"));
+        } catch (IOException e) {
+            getLogger().warning("Unable to update the config.yml: " + e);
+        }
+        saveConfig();
     }
 
     @Override
