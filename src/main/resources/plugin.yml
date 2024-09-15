@@ -3,6 +3,7 @@ version: '${version}'
 main: me.rockquiet.joinprotection.JoinProtection
 description: Protects players from mobs and damage for a set period of time after they join
 author: rockquiet
+folia-supported: true
 # using 1.13 for the version check to work properly
 api-version: 1.13
 

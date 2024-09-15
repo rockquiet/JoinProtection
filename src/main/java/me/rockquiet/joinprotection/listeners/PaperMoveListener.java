@@ -39,7 +39,7 @@ public class PaperMoveListener implements Listener {
 
         // fix for player getting pushed by an entity
         if (player.getNearbyEntities(0.5, 0.5, 0.5).stream().anyMatch(LivingEntity.class::isInstance)) {
-            player.teleport(fromLocation);
+            player.teleportAsync(fromLocation);
             return;
         }
 

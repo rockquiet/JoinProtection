@@ -1,5 +1,6 @@
 package me.rockquiet.joinprotection;
 
+import com.github.Anon8281.universalScheduler.UniversalRunnable;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -9,7 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -46,8 +46,8 @@ public class ProtectionHandler implements Listener {
 
         final int protectionTime = config.getInt("plugin.protection-time") + bonusTime.get();
 
-        new BukkitRunnable() {
             int timeRemaining = protectionTime;
+        new UniversalRunnable() {
 
             @Override
             public void run() {
@@ -80,7 +80,7 @@ public class ProtectionHandler implements Listener {
             return;
         }
 
-        new BukkitRunnable() {
+        new UniversalRunnable() {
             final Particle particle = Particle.valueOf(config.getString("particles.type"));
             final int particleAmount = config.getInt("particles.amount");
             final double circles = config.getLong("particles.circles");

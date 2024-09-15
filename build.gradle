@@ -25,6 +25,7 @@ dependencies {
 
     implementation 'com.tchristofferson:ConfigUpdater:2.1-SNAPSHOT'
     implementation 'org.bstats:bstats-bukkit:3.0.2'
+    implementation 'com.github.Anon8281:UniversalScheduler:0.1.6'
 
     compileOnly 'me.clip:placeholderapi:2.11.6'
     compileOnly 'io.github.miniplaceholders:miniplaceholders-api:2.2.3'

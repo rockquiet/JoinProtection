@@ -1,5 +1,6 @@
 package me.rockquiet.joinprotection;
 
+import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -15,7 +16,7 @@ public class UpdateChecker {
 
     @SuppressWarnings("deprecation")
     public UpdateChecker(JoinProtection plugin) {
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+        UniversalScheduler.getScheduler(plugin).runTaskAsynchronously(() -> {
             try {
                 String currentVersion = plugin.getDescription().getVersion();
 
