@@ -35,7 +35,7 @@ public class PaperMoveListener implements Listener {
         if (!protectionHandler.hasProtection(playerUUID)) return;
 
         FileConfiguration config = plugin.getConfig();
-        if (!config.getBoolean("cancel.on-move")) return;
+        if (!config.getBoolean("cancel.on-move.enabled")) return;
 
         // fix for player getting pushed by an entity
         if (player.getNearbyEntities(0.5, 0.5, 0.5).stream().anyMatch(LivingEntity.class::isInstance)) {
@@ -45,10 +45,15 @@ public class PaperMoveListener implements Listener {
 
         Location joinLocation = protectionHandler.getLocation(playerUUID);
         Location playerLocation = player.getLocation();
-        double distance = config.getDouble("cancel.distance");
+
+        if (config.getBoolean("cancel.on-move.ignore-y-axis")) {
+            joinLocation.setY(playerLocation.getY());
+        }
+
+        double distance = config.getDouble("cancel.on-move.distance");
         double distanceSquared = distance * distance;
 
-        if (joinLocation.getWorld() != playerLocation.getWorld() || joinLocation.set(joinLocation.getX(), playerLocation.getY(), joinLocation.getZ()).distanceSquared(playerLocation) >= distanceSquared) {
+        if (joinLocation.getWorld() != playerLocation.getWorld() || joinLocation.distanceSquared(playerLocation) >= distanceSquared) {
             protectionHandler.cancelProtection(player, "messages.protectionDeactivated");
         }
     }

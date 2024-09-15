@@ -34,9 +34,12 @@ cancel:
   # if attacking an entity
   on-attack: true
   # if player moved (or changes their world)
-  on-move: true
-  # distance the player is allowed to move without cancelling (y-axis is ignored)
-  distance: 3.0
+  on-move:
+    enabled: true
+    # if the y-axis should be ignored
+    ignore-y-axis: true
+    # distance the player is allowed to move without cancelling
+    distance: 3.0
   # if player breaks/places blocks
   on-block-interact: false
 
