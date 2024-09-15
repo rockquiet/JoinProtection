@@ -20,6 +20,9 @@ permissions:
   joinprotection.use:
     description: if the player has join protection
     default: true
+  joinprotection.use-world:
+    description: if the player has world protection
+    default: true
   joinprotection.reload:
     description: reloads the config
     default: op
@@ -48,5 +51,6 @@ permissions:
     default: false
     children:
       joinprotection.use: true
+      joinprotection.use-world: true
       joinprotection.reload: true
       joinprotection.bypass.*: true

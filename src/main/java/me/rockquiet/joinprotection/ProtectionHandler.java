@@ -1,6 +1,9 @@
 package me.rockquiet.joinprotection;
 
 import com.github.Anon8281.universalScheduler.UniversalRunnable;
+import me.rockquiet.joinprotection.protection.ProtectionInfo;
+import me.rockquiet.joinprotection.protection.ProtectionType;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
@@ -11,15 +14,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ProtectionHandler implements Listener {
 
-    private static final Map<UUID, Location> invinciblePlayers = new HashMap<>();
+    private final Map<UUID, ProtectionInfo> invinciblePlayers = new ConcurrentHashMap<>();
     private final JoinProtection plugin;
     private final MessageManager messageManager;
 
@@ -29,38 +31,57 @@ public class ProtectionHandler implements Listener {
         this.messageManager = messageManager;
     }
 
-    public void startProtection(Player player) {
-        FileConfiguration config = plugin.getConfig();
-        UUID uuid = player.getUniqueId();
-
-        invinciblePlayers.put(uuid, player.getLocation());
-
-        AtomicInteger bonusTime = new AtomicInteger();
-        player.getEffectivePermissions().stream()
+    private int getBonusTime(Player player) {
+        return player.getEffectivePermissions().stream()
                 .filter(permissionAttachmentInfo -> permissionAttachmentInfo.getPermission().startsWith("joinprotection.plus-"))
                 .map(permissionAttachmentInfo -> {
                     String permission = permissionAttachmentInfo.getPermission();
                     String[] segments = permission.split("-");
                     return Integer.parseInt(segments[segments.length - 1]);
-                }).max(Integer::compareTo).ifPresent(bonusTime::set);
+                }).max(Integer::compareTo)
+                .orElse(0);
+    }
 
-        final int protectionTime = config.getInt("plugin.protection-time") + bonusTime.get();
+    public void startJoinProtection(Player player) {
+        startProtection(player, plugin.getConfig().getInt("plugin.protection-time"), ProtectionType.JOIN);
+    }
 
-            int timeRemaining = protectionTime;
+    public void startWorldProtection(Player player) {
+        startProtection(player, plugin.getConfig().getInt("plugin.world-change-protection-time"), ProtectionType.WORLD);
+    }
+
+    public void startCommandProtection(Player player, int protectionTime) {
+        startProtection(player, protectionTime, ProtectionType.COMMAND);
+    }
+
+    public void startProtection(Player player, int protectionTime, ProtectionType type) {
+        if (protectionTime <= 0) return;
+        final int finalProtectionTime = protectionTime + getBonusTime(player);
+
+        final UUID uuid = player.getUniqueId();
+        if (hasProtection(uuid)) return;
+
+        invinciblePlayers.put(uuid, new ProtectionInfo(player.getLocation(), type));
+
+        final FileConfiguration config = plugin.getConfig();
         new UniversalRunnable() {
+            int timeRemaining = finalProtectionTime;
 
             @Override
             public void run() {
                 if (hasProtection(uuid)) {
                     // runs until timer reached 1
-                    if (timeRemaining <= protectionTime && timeRemaining >= 1) {
-                        messageManager.sendActionbar(config, player, "messages.timeRemaining", "%time%", String.valueOf(timeRemaining));
+                    if (timeRemaining <= finalProtectionTime && timeRemaining >= 1) {
+                        messageManager.sendProtectionInfo(config, player, "messages.timeRemaining",
+                                type.getPlaceholder(config),
+                                Placeholder.unparsed("time", String.valueOf(timeRemaining))
+                        );
                     }
                     // runs once
                     if (timeRemaining == 0) {
                         invinciblePlayers.remove(uuid);
                         cancel();
-                        messageManager.sendActionbar(config, player, "messages.protectionEnded");
+                        messageManager.sendProtectionInfo(config, player, "messages.protectionEnded", type.getPlaceholder(config));
                     }
                     timeRemaining--;
                 } else {
@@ -128,7 +149,14 @@ public class ProtectionHandler implements Listener {
 
     public Location getLocation(UUID playerUUID) {
         if (hasProtection(playerUUID)) {
-            return invinciblePlayers.get(playerUUID);
+            return invinciblePlayers.get(playerUUID).location();
+        }
+        return null;
+    }
+
+    public ProtectionType getProtectionType(UUID playerUUID) {
+        if (hasProtection(playerUUID)) {
+            return invinciblePlayers.get(playerUUID).type();
         }
         return null;
     }
@@ -141,9 +169,10 @@ public class ProtectionHandler implements Listener {
     }
 
     public void cancelProtection(Player player, String messageOnCancel) {
-        invinciblePlayers.remove(player.getUniqueId());
+        FileConfiguration config = plugin.getConfig();
+        messageManager.sendProtectionInfo(config, player, messageOnCancel, getProtectionType(player.getUniqueId()).getPlaceholder(config));
 
-        messageManager.sendActionbar(plugin.getConfig(), player, messageOnCancel);
+        invinciblePlayers.remove(player.getUniqueId());
     }
 
     public boolean isEventCancelled(UUID playerUUID, String module) {

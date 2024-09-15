@@ -32,6 +32,6 @@ public class JoinListener implements Listener {
             return;
         }
 
-        protectionHandler.startProtection(player);
+        protectionHandler.startJoinProtection(player);
     }
 }

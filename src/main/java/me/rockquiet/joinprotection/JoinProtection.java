@@ -57,6 +57,7 @@ public class JoinProtection extends JavaPlugin {
         PluginManager pluginManager = Bukkit.getPluginManager();
         pluginManager.registerEvents(protectionHandler, this);
         pluginManager.registerEvents(new JoinListener(this, protectionHandler), this);
+        pluginManager.registerEvents(new WorldChangeListener(this, protectionHandler), this);
         pluginManager.registerEvents(new DamageListener(this, messageManager, protectionHandler), this);
         pluginManager.registerEvents(new AttackListener(protectionHandler), this);
         pluginManager.registerEvents(new BlockListener(protectionHandler), this);

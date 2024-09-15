@@ -5,6 +5,7 @@ import me.rockquiet.joinprotection.MessageManager;
 import me.rockquiet.joinprotection.ProtectionHandler;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -38,7 +39,7 @@ public class DamageListener implements Listener {
         if (protectionHandler.hasProtection(protectedPlayerUUID) && event.getDamager() instanceof Player attacker) {
             FileConfiguration config = plugin.getConfig();
 
-            messageManager.sendMessage(config, attacker, "messages.cannotHurt", "%player%", protectedPlayer.getName());
+            messageManager.sendMessage(config, attacker, "messages.cannotHurt", Placeholder.unparsed("player", protectedPlayer.getName()));
 
             if (config.getBoolean("sound.enabled")) {
                 Sound sound = Sound.sound(Key.key(config.getString("sound.type")), Sound.Source.PLAYER, (float) config.getDouble("sound.volume"), (float) config.getDouble("sound.pitch"));
@@ -46,7 +47,7 @@ public class DamageListener implements Listener {
             }
         }
 
-        if (protectionHandler.isEventCancelled(protectedPlayerUUID, "modules.disable_damage_by_entities")) {
+        if (protectionHandler.isEventCancelled(protectedPlayerUUID, "modules.disable-damage-by-entities")) {
             event.setCancelled(true);
         }
     }
@@ -55,7 +56,7 @@ public class DamageListener implements Listener {
     public void onDamageByBlock(EntityDamageByBlockEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
-        if (protectionHandler.isEventCancelled(player.getUniqueId(), "modules.disable_damage_by_blocks")) {
+        if (protectionHandler.isEventCancelled(player.getUniqueId(), "modules.disable-damage-by-blocks")) {
             event.setCancelled(true);
         }
     }
@@ -64,7 +65,7 @@ public class DamageListener implements Listener {
     public void onDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
-        if (protectionHandler.isEventCancelled(player.getUniqueId(), "modules.disable_damage")) {
+        if (protectionHandler.isEventCancelled(player.getUniqueId(), "modules.disable-damage")) {
             event.setCancelled(true);
         }
     }
@@ -74,7 +75,7 @@ public class DamageListener implements Listener {
     public void onEntityTargetPlayer(EntityTargetEvent event) {
         if (!(event.getTarget() instanceof Player player)) return;
 
-        if (protectionHandler.isEventCancelled(player.getUniqueId(), "modules.disable_entity_targeting")) {
+        if (protectionHandler.isEventCancelled(player.getUniqueId(), "modules.disable-entity-targeting.enabled")) {
             event.setCancelled(true);
         }
     }

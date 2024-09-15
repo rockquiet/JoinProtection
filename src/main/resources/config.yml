@@ -10,13 +10,26 @@ plugin:
   world-list:
     - ExampleEntryForWorldList
     - AnotherExampleWorld
-  # protection time in seconds
+  # join protection time in seconds
   # add NUMBER amount of seconds to a player: joinprotection.plus-NUMBER
   protection-time: 10
-  # only give join protection to players who are joining for the first time.
+  # also protect players that switch worlds (i.e. go through a nether portal)
+  # set this to 0 to disable
+  world-change-protection-time: 0
+  # only give join protection to players who are joining the server for the first time.
   first-join-only: false
 
-# cancel protection timer
+display:
+  # where to display the remaining time, etc.
+  # allowed: ACTION_BAR, TITLE, SUBTITLE, CHAT
+  location: ACTION_BAR
+  # title display time in ticks
+  title:
+    fade-in: 0
+    stay: 20
+    fade-out: 20
+
+# cancel active protection
 cancel:
   # if attacking an entity
   on-attack: true
@@ -30,26 +43,30 @@ cancel:
 # when the player is...
 modules:
   # ...damaged by an entity
-  disable_damage_by_entities: true
+  disable-damage-by-entities: true
   # ...damaged by a block
-  disable_damage_by_blocks: false
+  disable-damage-by-blocks: false
   # ...damaged by whatever not cancelled by the first two (fall damage, etc.)
-  disable_damage: false
+  disable-damage: false
   # ...targeted by an entity
-  disable_entity_targeting: true
+  disable-entity-targeting:
+    enabled: true
+    # this is the range used to clear entity targets on world change
+    horizontal-range: 16.0
+    vertical-range: 16.0
   # do not allow the player to drop items
   disable-item-drops: false
   # do not allow the player to pickup items
   disable-item-pickup: false
 
-# particle aura around player with active join protection
+# particle aura around player with active protection
 particles:
   enabled: true
   # if the server MSPT take longer than this value, particles will no longer be displayed
   # INFO: this is not supported on spigot servers
   maximum-mspt: 50.0
   # all particles: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
-  # good looking particles / display duration:
+  # good-looking particles / display duration:
   # mid: WAX_ON, WAX_OFF, ENCHANTMENT_TABLE
   # long: VILLAGER_HAPPY
   type: ENCHANTMENT_TABLE
@@ -60,7 +77,7 @@ particles:
   # particle aura size
   circles: 4
 
-# plays a sound to players attacking others with active join protection
+# plays a sound to players attacking others with active protection
 sound:
   enabled: true
   # all sounds: https://docs.andre601.ch/Spigot-Sounds/sounds
@@ -72,13 +89,23 @@ sound:
 
 messages:
   prefix: "<gray>[</gray><gradient:#7287fd:#04a5e5>JoinProtection</gradient><gray>]</gray>"
-  noPerms: "%prefix% <red>No permissions!"
-  reload: "%prefix% <green>Configuration reloaded successfully."
-  timeRemaining: "<gradient:#7287fd:#04a5e5>Join Protection</gradient> <dark_gray><b>»</b> <white>%time%<gray>s"
-  protectionEnded: "<gradient:#7287fd:#04a5e5>Join Protection</gradient> <dark_gray><b>»</b> <gradient:#e64553:#d20f39>Elapsed!</gradient>"
-  protectionDeactivated: "<gradient:#7287fd:#04a5e5>Join Protection</gradient> <dark_gray><b>»</b> <gradient:#e64553:#d20f39>Disabled!</gradient>"
-  protectionDeactivatedAttack: "<gradient:#7287fd:#04a5e5>Join Protection</gradient> <dark_gray><b>»</b> <gradient:#e64553:#d20f39>Disabled because of your attack!</gradient>"
-  cannotHurt: "%prefix% <gray>You cannot hurt <white>%player% <gray>while they have active protection."
+  noPerms: "<prefix> <red>No permissions!"
+  commandUsage: "<prefix> <red>Usage: /<command_usage>"
+  playerNotFound: "<prefix> <red>Target player <dark_red><player> <red>not found!"
+  invalidNumberFormat: "<prefix> <red>The specified number <dark_red><number> <red>is invalid!"
+  numberMustBePositive: "<prefix> <red>The specified number <dark_red><number> <red>must be positive!"
+  alreadyProtected: "<prefix> <dark_red><player> <red>is already protected!"
+  protect: "<prefix> <yellow><player> <green>is now protected for <yellow><time><green>s."
+  reload: "<prefix> <green>Configuration reloaded successfully."
+  type:
+    join: "<gradient:#7287fd:#04a5e5>Join Protection</gradient>"
+    world: "<gradient:#2ab52a:#39d19b>World Protection</gradient>"
+    command: "<gradient:#ea6ffd:#a775e0>Protection</gradient>"
+  timeRemaining: "<type> <dark_gray><b>»</b> <white><time><gray>s"
+  protectionEnded: "<type> <dark_gray><b>»</b> <gradient:#e64553:#d20f39>Elapsed!</gradient>"
+  protectionDeactivated: "<type> <dark_gray><b>»</b> <gradient:#e64553:#d20f39>Disabled!</gradient>"
+  protectionDeactivatedAttack: "<type> <dark_gray><b>»</b> <gradient:#e64553:#d20f39>Disabled because of your attack!</gradient>"
+  cannotHurt: "<prefix> <gray>You cannot hurt <white><player> <gray>while they have active protection."
 
 # Toggle/Configure integrations into other plugins here.
 integration:
@@ -99,3 +126,6 @@ integration:
   # https://luckperms.net
   luckperms:
     enabled: true
+
+# do not edit/remove this
+file-version: 2
