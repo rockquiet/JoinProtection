@@ -70,7 +70,7 @@ public class JoinProtection extends JavaPlugin {
             pluginManager.registerEvents(new ItemPickupListener(protectionHandler), this);
         }
 
-        getCommand("joinprotection").setExecutor(new JoinProtectionCommand(this, messageManager));
+        getCommand("joinprotection").setExecutor(new JoinProtectionCommand(this, messageManager, protectionHandler));
         getCommand("joinprotection").setTabCompleter(new TabComplete());
 
         // PlaceholderAPI hook

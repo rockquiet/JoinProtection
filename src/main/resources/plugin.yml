@@ -23,8 +23,11 @@ permissions:
   joinprotection.use-world:
     description: if the player has world protection
     default: true
+  joinprotection.protect:
+    description: allows the use of the command to manually give protection to a player
+    default: op
   joinprotection.reload:
-    description: reloads the config
+    description: allows the use of the command to reload the config
     default: op
   joinprotection.bypass.cancel-on-move:
     description: bypasses the cancel on move option
@@ -52,5 +55,6 @@ permissions:
     children:
       joinprotection.use: true
       joinprotection.use-world: true
+      joinprotection.protect: true
       joinprotection.reload: true
       joinprotection.bypass.*: true
