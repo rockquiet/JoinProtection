@@ -1,5 +1,6 @@
 package me.rockquiet.joinprotection.commands;
 
+import me.rockquiet.joinprotection.configuration.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -26,14 +27,14 @@ public class TabComplete implements TabCompleter {
 
         int index = 0;
         if (args.length == 1) {
-            if (sender.hasPermission("joinprotection.protect")) {
+            if (sender.hasPermission(Permissions.PROTECT)) {
                 results.add("protect");
             }
-            if (sender.hasPermission("joinprotection.reload")) {
+            if (sender.hasPermission(Permissions.RELOAD)) {
                 results.add("reload");
             }
         }
-        if (args.length == 2 && args[0].equalsIgnoreCase("protect") && sender.hasPermission("joinprotection.protect")) {
+        if (args.length == 2 && args[0].equalsIgnoreCase("protect") && sender.hasPermission(Permissions.PROTECT)) {
             index = 1;
             for (Player p : Bukkit.getOnlinePlayers()) {
                 results.add(p.getName());

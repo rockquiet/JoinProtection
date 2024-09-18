@@ -24,9 +24,9 @@ public class MiniPlaceholders {
                 .audiencePlaceholder("status", (audience, queue, ctx) -> {
                     final Player player = (Player) audience;
                     if (protectionHandler.hasProtection(player.getUniqueId())) {
-                        return Tag.selfClosingInserting(Component.text(plugin.getConfig().getString("integration.miniplaceholders.status.protected")));
+                        return Tag.selfClosingInserting(Component.text(plugin.config().integration.miniplaceholders.status.protectionActive()));
                     } else {
-                        return Tag.selfClosingInserting(Component.text(plugin.getConfig().getString("integration.miniplaceholders.status.not-protected")));
+                        return Tag.selfClosingInserting(Component.text(plugin.config().integration.miniplaceholders.status.notProtected()));
                     }
                 })
                 .build();

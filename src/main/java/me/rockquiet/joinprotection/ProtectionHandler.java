@@ -1,13 +1,13 @@
 package me.rockquiet.joinprotection;
 
 import com.github.Anon8281.universalScheduler.UniversalRunnable;
+import me.rockquiet.joinprotection.configuration.Config;
 import me.rockquiet.joinprotection.protection.ProtectionInfo;
 import me.rockquiet.joinprotection.protection.ProtectionType;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,6 +15,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -43,11 +44,11 @@ public class ProtectionHandler implements Listener {
     }
 
     public void startJoinProtection(Player player) {
-        startProtection(player, plugin.getConfig().getInt("plugin.protection-time"), ProtectionType.JOIN);
+        startProtection(player, plugin.config().plugin.protectionTime, ProtectionType.JOIN);
     }
 
     public void startWorldProtection(Player player) {
-        startProtection(player, plugin.getConfig().getInt("plugin.world-change-protection-time"), ProtectionType.WORLD);
+        startProtection(player, plugin.config().plugin.worldChangeProtectionTime, ProtectionType.WORLD);
     }
 
     public void startCommandProtection(Player player, int protectionTime) {
@@ -63,7 +64,7 @@ public class ProtectionHandler implements Listener {
 
         invinciblePlayers.put(uuid, new ProtectionInfo(player.getLocation(), type));
 
-        final FileConfiguration config = plugin.getConfig();
+        final Config config = plugin.config();
         new UniversalRunnable() {
             int timeRemaining = finalProtectionTime;
 
@@ -72,7 +73,7 @@ public class ProtectionHandler implements Listener {
                 if (hasProtection(uuid)) {
                     // runs until timer reached 1
                     if (timeRemaining <= finalProtectionTime && timeRemaining >= 1) {
-                        messageManager.sendProtectionInfo(config, player, "messages.timeRemaining",
+                        messageManager.sendProtectionInfo(player, config.messages.timeRemaining,
                                 type.getPlaceholder(config),
                                 Placeholder.unparsed("time", String.valueOf(timeRemaining))
                         );
@@ -81,7 +82,7 @@ public class ProtectionHandler implements Listener {
                     if (timeRemaining == 0) {
                         invinciblePlayers.remove(uuid);
                         cancel();
-                        messageManager.sendProtectionInfo(config, player, "messages.protectionEnded", type.getPlaceholder(config));
+                        messageManager.sendProtectionInfo(player, config.messages.protectionEnded, type.getPlaceholder(config));
                     }
                     timeRemaining--;
                 } else {
@@ -94,17 +95,17 @@ public class ProtectionHandler implements Listener {
     }
 
     private void spawnParticles(Player player) {
-        FileConfiguration config = plugin.getConfig();
-        if (!config.getBoolean("particles.enabled")) return;
+        final Config config = plugin.config();
+        if (!config.particles.enabled) return;
 
-        if (plugin.isPaper() && plugin.getServer().getAverageTickTime() >= config.getDouble("particles.maximum-mspt")) {
+        if (plugin.isPaper() && plugin.getServer().getAverageTickTime() >= config.particles.maximumMspt) {
             return;
         }
 
         new UniversalRunnable() {
-            final Particle particle = Particle.valueOf(config.getString("particles.type"));
-            final int particleAmount = config.getInt("particles.amount");
-            final double circles = config.getLong("particles.circles");
+            final Particle particle = Particle.valueOf(config.particles.type);
+            final int particleAmount = config.particles.amount;
+            final double circles = config.particles.circles;
             final UUID playerUUID = player.getUniqueId();
             final World world = player.getWorld();
 
@@ -128,15 +129,16 @@ public class ProtectionHandler implements Listener {
                     cancel();
                 }
             }
-        }.runTaskTimer(plugin, 0, config.getLong("particles.refresh-rate"));
+        }.runTaskTimer(plugin, 0, config.particles.refreshRate);
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isEnabledInWorld(World world) {
-        FileConfiguration config = plugin.getConfig();
-        List<String> worldList = config.getStringList("plugin.world-list");
+        final Config config = plugin.config();
+        List<String> worldList = config.plugin.worldList;
         String worldName = world.getName();
 
-        return switch (config.getString("plugin.list-type").toLowerCase()) {
+        return switch (config.plugin.listType.toLowerCase(Locale.ROOT)) {
             case "whitelist" -> worldList.stream().anyMatch(s -> s.equals(worldName));
             case "blacklist" -> worldList.stream().noneMatch(s -> s.equals(worldName));
             default -> true;
@@ -161,23 +163,20 @@ public class ProtectionHandler implements Listener {
         return null;
     }
 
-    public void cancelProtectionIfEnabled(Player player, String permission, String cancelOn, String messageOnCancel) {
-        FileConfiguration config = plugin.getConfig();
-        if (invinciblePlayers.containsKey(player.getUniqueId()) && !player.hasPermission(permission) && config.contains(cancelOn) && config.getBoolean(cancelOn)) {
+    public void cancelProtectionIfEnabled(Player player, String permission, boolean cancelled, String messageOnCancel) {
+        if (invinciblePlayers.containsKey(player.getUniqueId()) && !player.hasPermission(permission) && cancelled) {
             cancelProtection(player, messageOnCancel);
         }
     }
 
     public void cancelProtection(Player player, String messageOnCancel) {
-        FileConfiguration config = plugin.getConfig();
-        messageManager.sendProtectionInfo(config, player, messageOnCancel, getProtectionType(player.getUniqueId()).getPlaceholder(config));
+        messageManager.sendProtectionInfo(player, messageOnCancel, getProtectionType(player.getUniqueId()).getPlaceholder(plugin.config()));
 
         invinciblePlayers.remove(player.getUniqueId());
     }
 
-    public boolean isEventCancelled(UUID playerUUID, String module) {
-        FileConfiguration config = plugin.getConfig();
-        return config.contains(module) && config.getBoolean(module) && hasProtection(playerUUID);
+    public boolean isEventCancelled(UUID playerUUID, boolean cancelled) {
+        return cancelled && hasProtection(playerUUID);
     }
 
     // clear map

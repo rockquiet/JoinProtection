@@ -3,11 +3,12 @@ package me.rockquiet.joinprotection.commands;
 import me.rockquiet.joinprotection.JoinProtection;
 import me.rockquiet.joinprotection.MessageManager;
 import me.rockquiet.joinprotection.ProtectionHandler;
+import me.rockquiet.joinprotection.configuration.Config;
+import me.rockquiet.joinprotection.configuration.Permissions;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,49 +45,50 @@ public class JoinProtectionCommand implements CommandExecutor {
     }
 
     private boolean protect(@NotNull CommandSender sender, @NotNull String[] args) {
+        final Config config = plugin.config();
         // /joinprotection protect <player> <time>
-        if ((sender instanceof Player player) && !player.hasPermission("joinprotection.protect")) {
-            messageManager.sendMessage(plugin.getConfig(), player, "messages.noPerms");
+        if ((sender instanceof Player player) && !player.hasPermission(Permissions.PROTECT)) {
+            messageManager.sendMessage(player, config.messages.noPerms);
             return false;
         }
 
         // check/get player
         if (args.length == 0 || args[0].isBlank()) {
-            messageManager.sendMessage(plugin.getConfig(), sender, "messages.commandUsage", Placeholder.unparsed("command_usage", "joinprotection protect <player> <time>"));
+            messageManager.sendMessage(sender, config.messages.commandUsage, Placeholder.parsed("command_usage", "joinprotection protect <b><player></b> <time>"));
             return false;
         }
         Player targetPlayer = plugin.getServer().getPlayerExact(args[0]);
         if (targetPlayer == null) {
-            messageManager.sendMessage(plugin.getConfig(), sender, "messages.playerNotFound", Placeholder.unparsed("player", args[0]));
+            messageManager.sendMessage(sender, config.messages.playerNotFound, Placeholder.unparsed("player", args[0]));
             return false;
         }
 
         // player already protected?
         if (protectionHandler.hasProtection(targetPlayer.getUniqueId())) {
-            messageManager.sendMessage(plugin.getConfig(), sender, "messages.alreadyProtected", Placeholder.unparsed("player", targetPlayer.getName()));
+            messageManager.sendMessage(sender, config.messages.alreadyProtected, Placeholder.unparsed("player", targetPlayer.getName()));
             return false;
         }
 
         // get time
         if (args.length == 1 || args[1].isBlank()) {
-            messageManager.sendMessage(plugin.getConfig(), sender, "messages.commandUsage", Placeholder.unparsed("command_usage", "joinprotection protect <player> <time>"));
+            messageManager.sendMessage(sender, config.messages.commandUsage, Placeholder.parsed("command_usage", "joinprotection protect <player> <b><time></b>"));
             return false;
         }
         int protectionTime;
         try {
             protectionTime = Integer.parseInt(args[1]);
         } catch (NumberFormatException e) {
-            messageManager.sendMessage(plugin.getConfig(), sender, "messages.invalidNumberFormat", Placeholder.unparsed("number", args[1]));
+            messageManager.sendMessage(sender, config.messages.invalidNumberFormat, Placeholder.unparsed("number", args[1]));
             return false;
         }
         if (protectionTime <= 0) {
-            messageManager.sendMessage(plugin.getConfig(), sender, "messages.numberMustBePositive", Placeholder.unparsed("number", String.valueOf(protectionTime)));
+            messageManager.sendMessage(sender, config.messages.numberMustBePositive, Placeholder.unparsed("number", String.valueOf(protectionTime)));
             return false;
         }
 
         // run protection
         protectionHandler.startCommandProtection(targetPlayer, protectionTime);
-        messageManager.sendMessage(plugin.getConfig(), sender, "messages.protect",
+        messageManager.sendMessage(sender, config.messages.protect,
                 Placeholder.unparsed("player", targetPlayer.getName()),
                 Placeholder.unparsed("time", String.valueOf(protectionTime))
         );
@@ -94,15 +96,13 @@ public class JoinProtectionCommand implements CommandExecutor {
     }
 
     private boolean reload(@NotNull CommandSender sender) {
-        FileConfiguration config = plugin.getConfig();
-
-        if ((sender instanceof Player player) && !player.hasPermission("joinprotection.reload")) {
-            messageManager.sendMessage(config, player, "messages.noPerms");
+        if ((sender instanceof Player player) && !player.hasPermission(Permissions.RELOAD)) {
+            messageManager.sendMessage(player, plugin.config().messages.noPerms);
             return false;
         }
 
-        plugin.reloadConfig();
-        messageManager.sendMessage(config, sender, "messages.reload");
+        plugin.configManager().load();
+        messageManager.sendMessage(sender, plugin.config().messages.reload);
         return true;
     }
 }

@@ -1,7 +1,8 @@
 package me.rockquiet.joinprotection.listeners;
 
-import me.rockquiet.joinprotection.JoinProtection;
 import me.rockquiet.joinprotection.ProtectionHandler;
+import me.rockquiet.joinprotection.configuration.ConfigManager;
+import me.rockquiet.joinprotection.configuration.Permissions;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -9,12 +10,11 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 public class JoinListener implements Listener {
 
-    private final JoinProtection plugin;
+    private final ConfigManager configManager;
     private final ProtectionHandler protectionHandler;
 
-    public JoinListener(JoinProtection joinProtection,
-                        ProtectionHandler protectionHandler) {
-        this.plugin = joinProtection;
+    public JoinListener(ConfigManager configManager, ProtectionHandler protectionHandler) {
+        this.configManager = configManager;
         this.protectionHandler = protectionHandler;
     }
 
@@ -22,13 +22,13 @@ public class JoinListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
 
-        if (!player.hasPermission("joinprotection.use")) return;
+        if (!player.hasPermission(Permissions.USE)) return;
 
-        if (!protectionHandler.isEnabledInWorld(player.getWorld()) && !player.hasPermission("joinprotection.bypass.world-list")) {
+        if (!protectionHandler.isEnabledInWorld(player.getWorld()) && !player.hasPermission(Permissions.BYPASS_WORLD_LIST)) {
             return;
         }
 
-        if (player.hasPlayedBefore() && plugin.getConfig().getBoolean("plugin.first-join-only")) {
+        if (player.hasPlayedBefore() && configManager.get().plugin.firstJoinOnly) {
             return;
         }
 

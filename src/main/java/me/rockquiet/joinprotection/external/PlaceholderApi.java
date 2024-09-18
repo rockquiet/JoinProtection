@@ -29,6 +29,7 @@ public class PlaceholderApi extends PlaceholderExpansion {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public @NotNull String getVersion() {
         return plugin.getDescription().getVersion();
     }
@@ -39,9 +40,9 @@ public class PlaceholderApi extends PlaceholderExpansion {
 
         if (params.equalsIgnoreCase("status")) {
             if (protectionHandler.hasProtection(player.getUniqueId())) {
-                return plugin.getConfig().getString("integration.placeholderapi.status.protected");
+                return plugin.config().integration.placeholderapi.status.protectionActive();
             } else {
-                return plugin.getConfig().getString("integration.placeholderapi.status.not-protected");
+                return plugin.config().integration.placeholderapi.status.notProtected();
             }
         }
 

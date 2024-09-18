@@ -1,9 +1,10 @@
 package me.rockquiet.joinprotection.listeners;
 
-import me.rockquiet.joinprotection.JoinProtection;
 import me.rockquiet.joinprotection.ProtectionHandler;
+import me.rockquiet.joinprotection.configuration.Config;
+import me.rockquiet.joinprotection.configuration.ConfigManager;
+import me.rockquiet.joinprotection.configuration.Permissions;
 import org.bukkit.Location;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,12 +15,11 @@ import java.util.UUID;
 
 public class MoveListener implements Listener {
 
-    private final JoinProtection plugin;
+    private final ConfigManager configManager;
     private final ProtectionHandler protectionHandler;
 
-    public MoveListener(JoinProtection joinProtection,
-                        ProtectionHandler protectionHandler) {
-        this.plugin = joinProtection;
+    public MoveListener(ConfigManager configManager, ProtectionHandler protectionHandler) {
+        this.configManager = configManager;
         this.protectionHandler = protectionHandler;
     }
 
@@ -31,11 +31,11 @@ public class MoveListener implements Listener {
         Player player = event.getPlayer();
         UUID playerUUID = player.getUniqueId();
 
-        if (player.hasPermission("joinprotection.bypass.cancel-on-move")) return;
+        if (player.hasPermission(Permissions.BYPASS_CANCEL_ON_MOVE)) return;
         if (!protectionHandler.hasProtection(playerUUID)) return;
 
-        FileConfiguration config = plugin.getConfig();
-        if (!config.getBoolean("cancel.on-move.enabled")) return;
+        Config config = configManager.get();
+        if (!config.cancel.onMove.enabled) return;
 
         // fix for player getting pushed by an entity
         if (player.getNearbyEntities(0.5, 0.5, 0.5).stream().anyMatch(LivingEntity.class::isInstance)) {
@@ -46,15 +46,15 @@ public class MoveListener implements Listener {
         Location joinLocation = protectionHandler.getLocation(playerUUID);
         Location playerLocation = player.getLocation();
 
-        if (config.getBoolean("cancel.on-move.ignore-y-axis")) {
+        if (config.cancel.onMove.ignoreYAxis) {
             joinLocation.setY(playerLocation.getY());
         }
 
-        double distance = config.getDouble("cancel.on-move.distance");
+        double distance = config.cancel.onMove.distance;
         double distanceSquared = distance * distance;
 
         if (joinLocation.getWorld() != playerLocation.getWorld() || joinLocation.distanceSquared(playerLocation) >= distanceSquared) {
-            protectionHandler.cancelProtection(player, "messages.protectionDeactivated");
+            protectionHandler.cancelProtection(player, config.messages.protectionDeactivated);
         }
     }
 }

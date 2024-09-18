@@ -3,10 +3,10 @@ package me.rockquiet.joinprotection.listeners;
 import me.rockquiet.joinprotection.JoinProtection;
 import me.rockquiet.joinprotection.MessageManager;
 import me.rockquiet.joinprotection.ProtectionHandler;
+import me.rockquiet.joinprotection.configuration.Config;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,20 +34,20 @@ public class DamageListener implements Listener {
     @EventHandler
     public void onDamageByEntity(EntityDamageByEntityEvent event) {
         if (!(event.getEntity() instanceof Player protectedPlayer)) return;
-        UUID protectedPlayerUUID = protectedPlayer.getUniqueId();
+        final UUID protectedPlayerUUID = protectedPlayer.getUniqueId();
+        final Config config = plugin.config();
 
         if (protectionHandler.hasProtection(protectedPlayerUUID) && event.getDamager() instanceof Player attacker) {
-            FileConfiguration config = plugin.getConfig();
 
-            messageManager.sendMessage(config, attacker, "messages.cannotHurt", Placeholder.unparsed("player", protectedPlayer.getName()));
+            messageManager.sendMessage(attacker, config.messages.cannotHurt, Placeholder.unparsed("player", protectedPlayer.getName()));
 
-            if (config.getBoolean("sound.enabled")) {
-                Sound sound = Sound.sound(Key.key(config.getString("sound.type")), Sound.Source.PLAYER, (float) config.getDouble("sound.volume"), (float) config.getDouble("sound.pitch"));
+            if (config.sound.enabled) {
+                Sound sound = Sound.sound(Key.key(config.sound.type), Sound.Source.PLAYER, (float) config.sound.volume, (float) config.sound.pitch);
                 plugin.adventure().player(attacker).playSound(sound, protectedPlayer);
             }
         }
 
-        if (protectionHandler.isEventCancelled(protectedPlayerUUID, "modules.disable-damage-by-entities")) {
+        if (protectionHandler.isEventCancelled(protectedPlayerUUID, config.modules.disableDamageByEntities)) {
             event.setCancelled(true);
         }
     }
@@ -56,7 +56,7 @@ public class DamageListener implements Listener {
     public void onDamageByBlock(EntityDamageByBlockEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
-        if (protectionHandler.isEventCancelled(player.getUniqueId(), "modules.disable-damage-by-blocks")) {
+        if (protectionHandler.isEventCancelled(player.getUniqueId(), plugin.config().modules.disableDamageByBlocks)) {
             event.setCancelled(true);
         }
     }
@@ -65,7 +65,7 @@ public class DamageListener implements Listener {
     public void onDamage(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player player)) return;
 
-        if (protectionHandler.isEventCancelled(player.getUniqueId(), "modules.disable-damage")) {
+        if (protectionHandler.isEventCancelled(player.getUniqueId(), plugin.config().modules.disableDamage)) {
             event.setCancelled(true);
         }
     }
@@ -75,7 +75,7 @@ public class DamageListener implements Listener {
     public void onEntityTargetPlayer(EntityTargetEvent event) {
         if (!(event.getTarget() instanceof Player player)) return;
 
-        if (protectionHandler.isEventCancelled(player.getUniqueId(), "modules.disable-entity-targeting.enabled")) {
+        if (protectionHandler.isEventCancelled(player.getUniqueId(), plugin.config().modules.disableEntityTargeting.enabled)) {
             event.setCancelled(true);
         }
     }

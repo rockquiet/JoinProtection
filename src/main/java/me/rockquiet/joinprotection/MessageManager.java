@@ -1,5 +1,8 @@
 package me.rockquiet.joinprotection;
 
+import me.rockquiet.joinprotection.configuration.Config;
+import me.rockquiet.joinprotection.configuration.ConfigManager;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
@@ -7,85 +10,83 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 
 import java.util.Locale;
 
 public class MessageManager {
 
-    private final JoinProtection plugin;
+    private final ConfigManager configManager;
+    private final BukkitAudiences audiences;
     private final MiniMessage msg;
 
     public MessageManager(JoinProtection plugin) {
-        this.plugin = plugin;
+        this.configManager = plugin.configManager();
+        this.audiences = plugin.adventure();
         this.msg = MiniMessage.miniMessage();
     }
 
-    private boolean messageEmpty(FileConfiguration config, String messagePath) {
-        return !config.contains(messagePath) || config.getString(messagePath).isBlank();
+    private TagResolver getPrefixPlaceholder() {
+        return Placeholder.parsed("prefix", configManager.get().messages.prefix);
     }
 
-    private TagResolver getPrefixPlaceholder(FileConfiguration config) {
-        return Placeholder.parsed("prefix", config.getString("messages.prefix"));
+    public void sendMessage(CommandSender sender, String message) {
+        sendMessage(sender, message, TagResolver.empty());
     }
 
-    public void sendMessage(FileConfiguration config, CommandSender sender, String messagePath) {
-        sendMessage(config, sender, messagePath, TagResolver.empty());
-    }
+    public void sendMessage(CommandSender sender, String message, TagResolver... tagResolvers) {
+        if (message.isBlank()) return;
 
-    public void sendMessage(FileConfiguration config, CommandSender sender, String messagePath, TagResolver... tagResolvers) {
-        if (messageEmpty(config, messagePath)) return;
-
-        plugin.adventure().sender(sender).sendMessage(msg.deserialize(
-                config.getString(messagePath),
-                getPrefixPlaceholder(config), TagResolver.resolver(tagResolvers)
+        audiences.sender(sender).sendMessage(msg.deserialize(
+                message,
+                getPrefixPlaceholder(), TagResolver.resolver(tagResolvers)
         ));
     }
 
-    public void sendActionbar(FileConfiguration config, Player player, String messagePath, TagResolver... tagResolvers) {
-        if (messageEmpty(config, messagePath)) return;
+    public void sendActionbar(Player player, String message, TagResolver... tagResolvers) {
+        if (message.isBlank()) return;
 
-        plugin.adventure().player(player).sendActionBar(msg.deserialize(
-                config.getString(messagePath),
-                getPrefixPlaceholder(config), TagResolver.resolver(tagResolvers)
+        audiences.player(player).sendActionBar(msg.deserialize(
+                message,
+                getPrefixPlaceholder(), TagResolver.resolver(tagResolvers)
         ));
     }
 
-    private Title.Times getTitleTimes(FileConfiguration config) {
+    private Title.Times getTitleTimes() {
+        final Config config = configManager.get();
         return Title.Times.times(
-                Ticks.duration(config.getLong("display.title.fade-in")),
-                Ticks.duration(config.getLong("display.title.stay")),
-                Ticks.duration(config.getLong("display.title.fade-out"))
+                Ticks.duration(config.display.title.fadeIn),
+                Ticks.duration(config.display.title.stay),
+                Ticks.duration(config.display.title.fadeOut)
         );
     }
 
-    public void sendTitle(FileConfiguration config, Player player, String messagePath, TagResolver... tagResolvers) {
-        if (messageEmpty(config, messagePath)) return;
+    public void sendTitle(Player player, String message, TagResolver... tagResolvers) {
+        if (message.isBlank()) return;
 
-        plugin.adventure().player(player).showTitle(Title.title(
-                msg.deserialize(config.getString(messagePath), getPrefixPlaceholder(config), TagResolver.resolver(tagResolvers)),
+        audiences.player(player).showTitle(Title.title(
+                msg.deserialize(message, getPrefixPlaceholder(), TagResolver.resolver(tagResolvers)),
                 Component.empty(),
-                getTitleTimes(config)
+                getTitleTimes()
         ));
     }
 
-    public void sendSubTitle(FileConfiguration config, Player player, String messagePath, TagResolver... tagResolvers) {
-        if (messageEmpty(config, messagePath)) return;
+    public void sendSubTitle(Player player, String message, TagResolver... tagResolvers) {
+        if (message.isBlank()) return;
 
-        plugin.adventure().player(player).showTitle(Title.title(
+        audiences.player(player).showTitle(Title.title(
                 Component.empty(),
-                msg.deserialize(config.getString(messagePath), getPrefixPlaceholder(config), TagResolver.resolver(tagResolvers)),
-                getTitleTimes(config)
+                msg.deserialize(message, getPrefixPlaceholder(), TagResolver.resolver(tagResolvers)),
+                getTitleTimes()
         ));
     }
 
-    public void sendProtectionInfo(FileConfiguration config, Player player, String messagePath, TagResolver... tagResolvers) {
-        switch (config.getString("display.location").toLowerCase(Locale.ROOT)) {
-            case "title" -> sendTitle(config, player, messagePath, tagResolvers);
-            case "subtitle" -> sendSubTitle(config, player, messagePath, tagResolvers);
-            case "chat" -> sendMessage(config, player, messagePath, tagResolvers);
-            default -> sendActionbar(config, player, messagePath, tagResolvers);
+    public void sendProtectionInfo(Player player, String message, TagResolver... tagResolvers) {
+        switch (configManager.get().display.location.toLowerCase(Locale.ROOT)) {
+            case "title" -> sendTitle(player, message, tagResolvers);
+            case "subtitle" -> sendSubTitle(player, message, tagResolvers);
+            case "chat" -> sendMessage(player, message, tagResolvers);
+            default -> sendActionbar(player, message, tagResolvers);
         }
     }
 }

@@ -1,28 +1,18 @@
 package me.rockquiet.joinprotection.protection;
 
+import me.rockquiet.joinprotection.configuration.Config;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
-import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.Objects;
 
 public enum ProtectionType {
 
-    JOIN("messages.type.join"),
-    WORLD("messages.type.world"),
-    COMMAND("messages.type.command");
+    JOIN,
+    WORLD,
+    COMMAND;
 
-    private final String messagePath;
-
-    ProtectionType(String messagePath) {
-        this.messagePath = messagePath;
-    }
-
-    public String getMessagePath() {
-        return messagePath;
-    }
-
-    public TagResolver getPlaceholder(FileConfiguration config) {
-        return Placeholder.parsed("type", Objects.requireNonNullElse(config.getString(getMessagePath()), "N/A"));
+    public TagResolver getPlaceholder(Config config) {
+        return Placeholder.parsed("type", Objects.requireNonNullElse(config.messages.type.get(this), "N/A"));
     }
 }
