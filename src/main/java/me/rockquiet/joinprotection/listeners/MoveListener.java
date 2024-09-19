@@ -38,7 +38,7 @@ public class MoveListener implements Listener {
         if (!config.cancel.onMove.enabled) return;
 
         // fix for player getting pushed by an entity
-        if (player.getNearbyEntities(0.5, 0.5, 0.5).stream().anyMatch(LivingEntity.class::isInstance)) {
+        if (config.cancel.onMove.disablePushing && player.getNearbyEntities(0.5, 0.5, 0.5).stream().anyMatch(LivingEntity.class::isInstance)) {
             player.teleport(fromLocation);
             return;
         }

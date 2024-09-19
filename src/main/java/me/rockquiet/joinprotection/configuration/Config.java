@@ -110,6 +110,10 @@ public final class Config {
             public boolean ignoreYAxis = true;
             @Comment("distance the player is allowed to move without cancelling")
             public double distance = 3.0;
+            @Comment("""
+                    If enabled, teleports the player back to their original position when pushed by an entity.
+                    Also triggers when the protected player tries to move into entities""")
+            public boolean disablePushing = true;
         }
     }
 
