@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Objects;
 
 public final class ConfigManager {
 
@@ -104,6 +105,12 @@ public final class ConfigManager {
         renameKey(oldConfig, "modules.disable_damage_by_blocks", "modules.disable-damage-by-blocks");
         renameKey(oldConfig, "modules.disable_damage", "modules.disable-damage");
         renameKey(oldConfig, "modules.disable_entity_targeting", "modules.disable-entity-targeting.enabled");
+
+        // fix default sound
+        final String soundType = "sound.type";
+        if (Objects.requireNonNullElse(oldConfig.getString(soundType), "").equalsIgnoreCase("ITEM_SHIELD_BLOCK")) {
+            oldConfig.set(soundType, null);
+        }
 
         // renamed protected to protectionActive
         renameKey(oldConfig, "integration.placeholderapi.status.protected", "integration.placeholderapi.status.protection-active");

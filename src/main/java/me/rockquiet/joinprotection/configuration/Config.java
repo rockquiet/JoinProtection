@@ -177,8 +177,10 @@ public final class Config {
     public static class SoundSection {
         public boolean enabled = true;
 
-        @Comment("all sounds: https://docs.andre601.ch/Spigot-Sounds/sounds")
-        public String type = "ITEM_SHIELD_BLOCK";
+        @Comment("""
+                all sounds: https://minecraft.wiki/w/Sounds.json#Java_Edition_values
+                or try them in game with the /playsound command""")
+        public String type = "item.shield.block";
 
         @Comment("the volume of the sound")
         public double volume = 0.8;
