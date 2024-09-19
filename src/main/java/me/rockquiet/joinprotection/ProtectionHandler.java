@@ -8,16 +8,14 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
+import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ProtectionHandler implements Listener {
@@ -161,6 +159,18 @@ public class ProtectionHandler implements Listener {
             return invinciblePlayers.get(playerUUID).type();
         }
         return null;
+    }
+
+    public void clearMobTargets(Player player) {
+        final Config config = plugin.config();
+        final double horizontalRange = config.modules.disableEntityTargeting.horizontalRange;
+        final double verticalRange = config.modules.disableEntityTargeting.verticalRange;
+
+        player.getNearbyEntities(horizontalRange, verticalRange, horizontalRange).forEach(entity -> {
+            if (entity instanceof Mob mob && Objects.equals(mob.getTarget(), player)) {
+                mob.setTarget(null);
+            }
+        });
     }
 
     public void cancelProtectionIfEnabled(Player player, String permission, boolean cancelled, String messageOnCancel) {

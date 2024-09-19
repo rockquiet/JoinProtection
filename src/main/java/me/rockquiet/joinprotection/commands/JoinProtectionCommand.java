@@ -92,6 +92,11 @@ public class JoinProtectionCommand implements CommandExecutor {
                 Placeholder.unparsed("player", targetPlayer.getName()),
                 Placeholder.unparsed("time", String.valueOf(protectionTime))
         );
+
+        if (config.modules.disableEntityTargeting.enabled) {
+            protectionHandler.clearMobTargets(targetPlayer);
+        }
+        
         return true;
     }
 
