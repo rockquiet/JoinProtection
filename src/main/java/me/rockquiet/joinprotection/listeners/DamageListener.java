@@ -4,8 +4,6 @@ import me.rockquiet.joinprotection.JoinProtection;
 import me.rockquiet.joinprotection.MessageManager;
 import me.rockquiet.joinprotection.ProtectionHandler;
 import me.rockquiet.joinprotection.configuration.Config;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -42,8 +40,7 @@ public class DamageListener implements Listener {
             messageManager.sendMessage(attacker, config.messages.cannotHurt, Placeholder.unparsed("player", protectedPlayer.getName()));
 
             if (config.sound.enabled) {
-                Sound sound = Sound.sound(Key.key(config.sound.type), Sound.Source.PLAYER, (float) config.sound.volume, (float) config.sound.pitch);
-                plugin.adventure().player(attacker).playSound(sound, protectedPlayer);
+                plugin.adventure().player(attacker).playSound(config.sound.toSound(), protectedPlayer);
             }
         }
 

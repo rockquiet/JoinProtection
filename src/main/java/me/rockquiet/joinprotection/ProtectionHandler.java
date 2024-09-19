@@ -103,7 +103,7 @@ public class ProtectionHandler implements Listener {
         }
 
         new UniversalRunnable() {
-            final Particle particle = Particle.valueOf(config.particles.type);
+            final Particle particle = config.particles.toParticle();
             final int particleAmount = config.particles.amount;
             final double circles = config.particles.circles;
             final UUID playerUUID = player.getUniqueId();

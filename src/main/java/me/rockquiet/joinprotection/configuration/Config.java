@@ -3,8 +3,14 @@ package me.rockquiet.joinprotection.configuration;
 import de.exlll.configlib.Comment;
 import de.exlll.configlib.Configuration;
 import me.rockquiet.joinprotection.protection.ProtectionType;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.util.Ticks;
+import org.bukkit.Particle;
 
 import java.util.List;
+import java.util.Locale;
 
 @SuppressWarnings("FieldMayBeFinal")
 @Configuration
@@ -22,6 +28,7 @@ public final class Config {
     public ParticlesSection particles = new ParticlesSection();
     @Comment("plays a sound to players attacking others with active protection")
     public SoundSection sound = new SoundSection();
+    @Comment("use \"\" to disable a message")
     public MessagesSection messages = new MessagesSection();
     @Comment("Toggle/Configure integrations into other plugins here.")
     public IntegrationSection integration = new IntegrationSection();
@@ -73,6 +80,14 @@ public final class Config {
             public int fadeIn = 0;
             public int stay = 20;
             public int fadeOut = 20;
+
+            public Title.Times toTimes() {
+                return Title.Times.times(
+                        Ticks.duration(fadeIn),
+                        Ticks.duration(stay),
+                        Ticks.duration(fadeOut)
+                );
+            }
         }
     }
 
@@ -152,6 +167,10 @@ public final class Config {
 
         @Comment("particle aura size")
         public int circles = 4;
+
+        public Particle toParticle() {
+            return Particle.valueOf(type);
+        }
     }
 
     @Configuration
@@ -166,6 +185,10 @@ public final class Config {
 
         @Comment("the pitch of the sound")
         public double pitch = 1.0;
+
+        public Sound toSound() {
+            return Sound.sound(Key.key(type.toLowerCase(Locale.ROOT)), Sound.Source.PLAYER, (float) volume, (float) pitch);
+        }
     }
 
     @Configuration

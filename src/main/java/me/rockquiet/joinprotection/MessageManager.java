@@ -1,6 +1,5 @@
 package me.rockquiet.joinprotection;
 
-import me.rockquiet.joinprotection.configuration.Config;
 import me.rockquiet.joinprotection.configuration.ConfigManager;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
@@ -8,7 +7,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.title.Title;
-import net.kyori.adventure.util.Ticks;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -53,12 +51,7 @@ public class MessageManager {
     }
 
     private Title.Times getTitleTimes() {
-        final Config config = configManager.get();
-        return Title.Times.times(
-                Ticks.duration(config.display.title.fadeIn),
-                Ticks.duration(config.display.title.stay),
-                Ticks.duration(config.display.title.fadeOut)
-        );
+        return configManager.get().display.title.toTimes();
     }
 
     public void sendTitle(Player player, String message, TagResolver... tagResolvers) {
