@@ -21,13 +21,18 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ProtectionHandler implements Listener {
 
     private final Map<UUID, ProtectionInfo> invinciblePlayers = new ConcurrentHashMap<>();
+
     private final JoinProtection plugin;
     private final MessageManager messageManager;
+
+    private final double[][] particleCoordinates;
 
     public ProtectionHandler(JoinProtection joinProtection,
                              MessageManager messageManager) {
         this.plugin = joinProtection;
         this.messageManager = messageManager;
+
+        this.particleCoordinates = calculateParticleCoordinates();
     }
 
     private int getBonusTime(Player player) {
@@ -92,6 +97,26 @@ public class ProtectionHandler implements Listener {
         spawnParticles(player);
     }
 
+    private double[][] calculateParticleCoordinates() {
+        final int circles = plugin.config().particles.circles;
+        final double increment = Math.PI / circles;
+
+        int arrayLocation = 0;
+        double[][] coordinates = new double[(circles + 1) * circles * 2][];
+
+        for (double i = 0; i <= Math.PI; i += increment) {
+            double radius = Math.sin(i);
+            double y = Math.cos(i);
+            for (double a = 0; a < Math.PI * 2; a += increment) {
+                double x = Math.cos(a) * radius;
+                double z = Math.sin(a) * radius;
+                coordinates[arrayLocation++] = new double[]{x, y, z};
+            }
+        }
+
+        return coordinates;
+    }
+
     private void spawnParticles(Player player) {
         final Config config = plugin.config();
         if (!config.particles.enabled) return;
@@ -103,25 +128,22 @@ public class ProtectionHandler implements Listener {
         new UniversalRunnable() {
             final Particle particle = config.particles.toParticle();
             final int particleAmount = config.particles.amount;
-            final double circles = config.particles.circles;
+            final double[] scaleFactor = config.particles.scaleFactor;
+
             final UUID playerUUID = player.getUniqueId();
             final World world = player.getWorld();
 
             @Override
             public void run() {
                 if (hasProtection(playerUUID)) {
-                    Location location = player.getLocation().add(0, 1.5, 0);
+                    final Location location = player.getLocation().add(0, player.getHeight() / 2, 0);
 
-                    for (double i = 0; i <= Math.PI; i += Math.PI / circles) {
-                        double radius = Math.sin(i);
-                        double y = Math.cos(i);
-                        for (double a = 0; a < Math.PI * 2; a += Math.PI / circles) {
-                            double x = Math.cos(a) * radius;
-                            double z = Math.sin(a) * radius;
-                            location.add(x, y, z);
-                            world.spawnParticle(particle, location, particleAmount);
-                            location.subtract(x, y, z);
-                        }
+                    for (double[] coordinate : particleCoordinates) {
+                        double x = coordinate[0] * scaleFactor[0];
+                        double y = coordinate[1] * scaleFactor[1];
+                        double z = coordinate[2] * scaleFactor[2];
+
+                        world.spawnParticle(particle, location.clone().add(x, y, z), particleAmount);
                     }
                 } else {
                     cancel();

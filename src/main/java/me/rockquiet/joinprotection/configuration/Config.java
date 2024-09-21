@@ -160,7 +160,7 @@ public final class Config {
                 all particles: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/Particle.html
                 good-looking particles / display duration:
                 mid: WAX_ON, WAX_OFF, ENCHANTMENT_TABLE
-                long: VILLAGER_HAPPY""")
+                long: HAPPY_VILLAGER""")
         public String type = "ENCHANTMENT_TABLE";
 
         @Comment("the number of particles which get used")
@@ -171,6 +171,9 @@ public final class Config {
 
         @Comment("particle aura size")
         public int circles = 4;
+
+        @Comment("scales the particle sphere on each axis (x, y, z)")
+        public double[] scaleFactor = new double[]{1.0, 1.2, 1.0};
 
         public Particle toParticle() {
             return Particle.valueOf(type);
