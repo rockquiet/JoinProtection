@@ -96,7 +96,7 @@ public class JoinProtectionCommand implements CommandExecutor {
         if (config.modules.disableEntityTargeting.enabled) {
             protectionHandler.clearMobTargets(targetPlayer);
         }
-        
+
         return true;
     }
 
@@ -107,6 +107,8 @@ public class JoinProtectionCommand implements CommandExecutor {
         }
 
         plugin.configManager().load();
+        protectionHandler.calculateParticleCoordinates();
+
         messageManager.sendMessage(sender, plugin.config().messages.reload);
         return true;
     }
