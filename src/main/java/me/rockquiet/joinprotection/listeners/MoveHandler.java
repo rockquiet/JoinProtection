@@ -39,7 +39,7 @@ public class MoveHandler {
             return;
         }
 
-        Location joinLocation = protectionHandler.getLocation(playerUUID);
+        Location joinLocation = protectionHandler.getProtectionInfo(playerUUID).location();
         Location playerLocation = player.getLocation();
 
         if (config.cancel.onMove.ignoreYAxis) {

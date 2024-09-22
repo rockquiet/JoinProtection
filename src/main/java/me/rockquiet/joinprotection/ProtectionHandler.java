@@ -165,16 +165,9 @@ public class ProtectionHandler implements Listener {
         return invinciblePlayers.containsKey(playerUUID);
     }
 
-    public Location getLocation(UUID playerUUID) {
+    public ProtectionInfo getProtectionInfo(UUID playerUUID) {
         if (hasProtection(playerUUID)) {
-            return invinciblePlayers.get(playerUUID).location();
-        }
-        return null;
-    }
-
-    public ProtectionType getProtectionType(UUID playerUUID) {
-        if (hasProtection(playerUUID)) {
-            return invinciblePlayers.get(playerUUID).type();
+            return invinciblePlayers.get(playerUUID);
         }
         return null;
     }
@@ -192,13 +185,13 @@ public class ProtectionHandler implements Listener {
     }
 
     public void cancelProtectionIfEnabled(Player player, String permission, boolean cancelled, String messageOnCancel) {
-        if (invinciblePlayers.containsKey(player.getUniqueId()) && !player.hasPermission(permission) && cancelled) {
+        if (hasProtection(player.getUniqueId()) && !player.hasPermission(permission) && cancelled) {
             cancelProtection(player, messageOnCancel);
         }
     }
 
     public void cancelProtection(Player player, String messageOnCancel) {
-        messageManager.sendProtectionInfo(player, messageOnCancel, getProtectionType(player.getUniqueId()).getPlaceholder(plugin.config()));
+        messageManager.sendProtectionInfo(player, messageOnCancel, getProtectionInfo(player.getUniqueId()).type().getPlaceholder(plugin.config()));
 
         invinciblePlayers.remove(player.getUniqueId());
     }
