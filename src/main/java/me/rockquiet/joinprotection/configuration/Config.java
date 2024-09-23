@@ -210,7 +210,9 @@ public final class Config {
         public String invalidNumberFormat = "<prefix> <red>The specified number <dark_red><number> <red>is invalid!";
         public String numberMustBePositive = "<prefix> <red>The specified number <dark_red><number> <red>must be positive!";
         public String alreadyProtected = "<prefix> <dark_red><player> <red>is already protected!";
+        public String notProtected = "<prefix> <dark_red><player> <red>is currently not protected!";
         public String protect = "<prefix> <yellow><player> <green>is now protected for <yellow><time><green>s.";
+        public String cancel = "<prefix> <green>The protection of <yellow><player></yellow> is now cancelled.";
         public String reload = "<prefix> <green>Configuration reloaded successfully.";
         public String cannotHurt = "<prefix> <gray>You cannot hurt <white><player> <gray>while they have active protection.";
         @Comment("Used in protection info display")

@@ -35,6 +35,7 @@ public class JoinProtectionCommand implements CommandExecutor {
 
         return switch (args[0].toLowerCase(Locale.ROOT)) {
             case "protect" -> protect(sender, removeFirstArg(args));
+            case "cancel" -> cancel(sender, removeFirstArg(args));
             case "reload" -> reload(sender);
             default -> false;
         };
@@ -45,12 +46,9 @@ public class JoinProtectionCommand implements CommandExecutor {
     }
 
     private boolean protect(@NotNull CommandSender sender, @NotNull String[] args) {
-        final Config config = plugin.config();
         // /joinprotection protect <player> <time>
-        if ((sender instanceof Player player) && !player.hasPermission(Permissions.PROTECT)) {
-            messageManager.sendMessage(player, config.messages.noPerms);
-            return false;
-        }
+        if (hasNoPerms(sender, Permissions.PROTECT)) return false;
+        final Config config = plugin.config();
 
         // check/get player
         if (args.length == 0 || args[0].isBlank()) {
@@ -100,16 +98,48 @@ public class JoinProtectionCommand implements CommandExecutor {
         return true;
     }
 
-    private boolean reload(@NotNull CommandSender sender) {
-        if ((sender instanceof Player player) && !player.hasPermission(Permissions.RELOAD)) {
-            messageManager.sendMessage(player, plugin.config().messages.noPerms);
+    private boolean cancel(@NotNull CommandSender sender, @NotNull String[] args) {
+        // /joinprotection cancel <player>
+        if (hasNoPerms(sender, Permissions.CANCEL)) return false;
+        final Config config = plugin.config();
+
+        // check/get player
+        if (args.length == 0 || args[0].isBlank()) {
+            messageManager.sendMessage(sender, config.messages.commandUsage, Placeholder.parsed("command_usage", "joinprotection cancel <b><player></b>"));
             return false;
         }
+        Player targetPlayer = plugin.getServer().getPlayerExact(args[0]);
+        if (targetPlayer == null) {
+            messageManager.sendMessage(sender, config.messages.playerNotFound, Placeholder.unparsed("player", args[0]));
+            return false;
+        }
+
+        if (!protectionHandler.hasProtection(targetPlayer.getUniqueId())) {
+            messageManager.sendMessage(sender, config.messages.notProtected, Placeholder.unparsed("player", targetPlayer.getName()));
+            return false;
+        }
+
+        protectionHandler.cancelProtection(targetPlayer, config.messages.protectionDeactivated);
+        messageManager.sendMessage(sender, config.messages.cancel, Placeholder.unparsed("player", targetPlayer.getName()));
+
+        return true;
+    }
+
+    private boolean reload(@NotNull CommandSender sender) {
+        if (hasNoPerms(sender, Permissions.RELOAD)) return false;
 
         plugin.configManager().load();
         protectionHandler.calculateParticleCoordinates();
 
         messageManager.sendMessage(sender, plugin.config().messages.reload);
         return true;
+    }
+
+    private boolean hasNoPerms(@NotNull CommandSender sender, @NotNull String permission) {
+        if ((sender instanceof Player player) && !player.hasPermission(permission)) {
+            messageManager.sendMessage(player, plugin.config().messages.noPerms);
+            return true;
+        }
+        return false;
     }
 }

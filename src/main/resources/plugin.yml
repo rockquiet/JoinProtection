@@ -26,6 +26,9 @@ permissions:
   joinprotection.protect:
     description: allows the use of the command to manually give protection to a player
     default: op
+  joinprotection.cancel:
+    description: allows the use of the command to manually cancel the protection of a player
+    default: op
   joinprotection.reload:
     description: allows the use of the command to reload the config
     default: op
@@ -56,5 +59,6 @@ permissions:
       joinprotection.use: true
       joinprotection.use-world: true
       joinprotection.protect: true
+      joinprotection.cancel: true
       joinprotection.reload: true
       joinprotection.bypass.*: true

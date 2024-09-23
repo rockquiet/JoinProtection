@@ -30,11 +30,16 @@ public class TabComplete implements TabCompleter {
             if (sender.hasPermission(Permissions.PROTECT)) {
                 results.add("protect");
             }
+            if (sender.hasPermission(Permissions.CANCEL)) {
+                results.add("cancel");
+            }
             if (sender.hasPermission(Permissions.RELOAD)) {
                 results.add("reload");
             }
         }
-        if (args.length == 2 && args[0].equalsIgnoreCase("protect") && sender.hasPermission(Permissions.PROTECT)) {
+        if (args.length == 2 && (args[0].equalsIgnoreCase("protect") && sender.hasPermission(Permissions.PROTECT)
+                || args[0].equalsIgnoreCase("cancel") && sender.hasPermission(Permissions.CANCEL))
+        ) {
             index = 1;
             for (Player p : Bukkit.getOnlinePlayers()) {
                 results.add(p.getName());
