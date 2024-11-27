@@ -153,12 +153,12 @@ public class ProtectionHandler implements Listener {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isEnabledInWorld(World world) {
         final Config config = plugin.config();
-        List<String> worldList = config.plugin.worldList;
-        String worldName = world.getName();
+        final Set<String> worldList = config.plugin.worldList;
+        final String worldName = world.getName();
 
         return switch (config.plugin.listType.toLowerCase(Locale.ROOT)) {
-            case "whitelist" -> worldList.stream().anyMatch(s -> s.equals(worldName));
-            case "blacklist" -> worldList.stream().noneMatch(s -> s.equals(worldName));
+            case "whitelist" -> worldList.contains(worldName);
+            case "blacklist" -> !worldList.contains(worldName);
             default -> true;
         };
     }

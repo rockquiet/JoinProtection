@@ -9,8 +9,8 @@ import net.kyori.adventure.title.Title;
 import net.kyori.adventure.util.Ticks;
 import org.bukkit.Particle;
 
-import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 @SuppressWarnings("FieldMayBeFinal")
 @Configuration
@@ -48,7 +48,7 @@ public final class Config {
                 BLACKLIST: the plugin will not work in worlds listed below
                 WHITELIST: the plugin will only work in worlds listed below""")
         public String listType = "disabled";
-        public List<String> worldList = List.of("ExampleEntryForWorldList", "AnotherExampleWorld");
+        public Set<String> worldList = Set.of("ExampleEntryForWorldList", "AnotherExampleWorld");
 
         @Comment("""
                 join protection time in seconds
