@@ -100,11 +100,11 @@ public class ProtectionHandler implements Listener {
     public void calculateParticleCoordinates() {
         final Config config = plugin.config();
         final double[] scale = config.particles.scaleFactor;
-        final int circles = config.particles.circles;
+        final int circles = config.particles.circles <= 0 ? 4 : config.particles.circles;
         final double increment = Math.PI / circles;
 
         int arrayLocation = 0;
-        particleCoordinates = new double[(circles + 1) * circles * 2][];
+        particleCoordinates = new double[(circles + 1) * circles * 2][3];
 
         for (double i = 0; i <= Math.PI; i += increment) {
             double radius = Math.sin(i);
@@ -113,6 +113,8 @@ public class ProtectionHandler implements Listener {
                 double x = Math.cos(a) * radius;
                 double z = Math.sin(a) * radius;
                 particleCoordinates[arrayLocation++] = new double[]{x * scale[0], y * scale[1], z * scale[2]};
+
+                if (arrayLocation >= particleCoordinates.length) break;
             }
         }
     }
