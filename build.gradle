@@ -81,17 +81,18 @@ tasks {
     // Folia
     runPaper.folia.registerTask()
     runFolia {
+        runDirectory(file("runFolia"))
         minecraftVersion("1.20.6")
     }
 }
 
-void disableStats() {
-    var cfg = file("run/plugins/bStats/config.yml")
+void disableStats(DirectoryProperty runDir) {
+    def cfg = file(runDir.asFile.getOrElse(file("run")).name + "/plugins/bStats/config.yml")
     if (!cfg.exists()) {
         cfg.parentFile.mkdirs()
         cfg.setText("enabled: false\n", "UTF-8")
     }
 }
 
-tasks.runFolia.doFirst { disableStats() }
-tasks.runServer.doFirst { disableStats() }
+tasks.runFolia.doFirst { disableStats(runFolia.getRunDirectory()) }
+tasks.runServer.doFirst { disableStats(runServer.getRunDirectory()) }
