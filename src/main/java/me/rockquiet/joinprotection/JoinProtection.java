@@ -45,16 +45,6 @@ public class JoinProtection extends JavaPlugin {
         if (Arrays.stream(Package.getPackages()).anyMatch(aPackage -> aPackage.getName().contains("io.papermc"))) {
             isPaper = true;
         }
-        // check if server version is 1.17.1 or below
-        String bukkitVersion = Bukkit.getBukkitVersion();
-        if (Integer.parseInt(bukkitVersion.split("\\.")[1].replace("-R0", "")) <= 17 && !bukkitVersion.contains("1.17.1")) {
-            getLogger().warning("=================================================");
-            getLogger().warning(" You are running an incompatible server version.");
-            getLogger().warning(" Please consider updating to 1.17.1 or newer.");
-            getLogger().warning("=================================================");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
 
         this.scheduler = createPlatformScheduler();
         this.configManager = new ConfigManager(this);
