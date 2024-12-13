@@ -13,7 +13,6 @@ repositories {
         name = "papermc-repo"
         url = "https://repo.papermc.io/repository/maven-public/"
     }
-    maven { url = 'https://jitpack.io' }
     maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
 }
 
@@ -26,7 +25,6 @@ dependencies {
     implementation 'de.exlll:configlib-yaml:4.5.0'
 
     implementation 'org.bstats:bstats-bukkit:3.1.0'
-    implementation 'com.github.Anon8281:UniversalScheduler:0.1.6'
 
     compileOnly 'me.clip:placeholderapi:2.11.6'
     compileOnly 'io.github.miniplaceholders:miniplaceholders-api:2.2.3'

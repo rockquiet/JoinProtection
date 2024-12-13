@@ -8,6 +8,10 @@ import me.rockquiet.joinprotection.external.LuckPermsContext;
 import me.rockquiet.joinprotection.external.MiniPlaceholders;
 import me.rockquiet.joinprotection.external.PlaceholderApi;
 import me.rockquiet.joinprotection.listeners.*;
+import me.rockquiet.joinprotection.scheduler.PlatformScheduler;
+import me.rockquiet.joinprotection.scheduler.folia.FoliaScheduler;
+import me.rockquiet.joinprotection.scheduler.paper.PaperScheduler;
+import me.rockquiet.joinprotection.scheduler.spigot.SpigotScheduler;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.SimplePie;
@@ -21,9 +25,19 @@ import java.util.Arrays;
 public class JoinProtection extends JavaPlugin {
 
     private ConfigManager configManager;
+    private PlatformScheduler scheduler;
 
     private boolean isPaper;
     private BukkitAudiences audiences;
+
+    private static boolean hasClass(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
 
     @Override
     public void onEnable() {
@@ -42,6 +56,7 @@ public class JoinProtection extends JavaPlugin {
             return;
         }
 
+        this.scheduler = createPlatformScheduler();
         this.configManager = new ConfigManager(this);
 
         this.audiences = BukkitAudiences.create(this);
@@ -108,6 +123,21 @@ public class JoinProtection extends JavaPlugin {
 
     public Config config() {
         return configManager.get();
+    }
+
+    private PlatformScheduler createPlatformScheduler() {
+        final boolean isRegionSchedulerAvailable = hasClass("io.papermc.paper.threadedregions.scheduler.ScheduledTask");
+        if (hasClass("io.papermc.paper.threadedregions.RegionizedServer") && isRegionSchedulerAvailable) {
+            return new FoliaScheduler(this);
+        } else if (isPaper && isRegionSchedulerAvailable) {
+            return new PaperScheduler(this);
+        } else {
+            return new SpigotScheduler(this);
+        }
+    }
+
+    public PlatformScheduler getScheduler() {
+        return scheduler;
     }
 
     public @NonNull BukkitAudiences adventure() {

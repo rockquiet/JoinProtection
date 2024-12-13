@@ -1,6 +1,5 @@
 package me.rockquiet.joinprotection;
 
-import com.github.Anon8281.universalScheduler.UniversalRunnable;
 import me.rockquiet.joinprotection.configuration.Config;
 import me.rockquiet.joinprotection.protection.ProtectionInfo;
 import me.rockquiet.joinprotection.protection.ProtectionType;
@@ -17,6 +16,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ProtectionHandler implements Listener {
 
@@ -68,31 +68,25 @@ public class ProtectionHandler implements Listener {
         invinciblePlayers.put(uuid, new ProtectionInfo(player.getLocation(), type));
 
         final Config config = plugin.config();
-        new UniversalRunnable() {
-            int timeRemaining = finalProtectionTime;
-
-            @Override
-            public void run() {
-                if (hasProtection(uuid)) {
-                    // runs until timer reached 1
-                    if (timeRemaining <= finalProtectionTime && timeRemaining >= 1) {
-                        messageManager.sendProtectionInfo(player, config.messages.timeRemaining,
-                                type.getPlaceholder(config),
-                                Placeholder.unparsed("time", String.valueOf(timeRemaining))
-                        );
-                    }
-                    // runs once
-                    if (timeRemaining == 0) {
-                        invinciblePlayers.remove(uuid);
-                        cancel();
-                        messageManager.sendProtectionInfo(player, config.messages.protectionEnded, type.getPlaceholder(config));
-                    }
-                    timeRemaining--;
-                } else {
-                    cancel();
-                }
+        final AtomicInteger timeRemaining = new AtomicInteger(finalProtectionTime);
+        plugin.getScheduler().runTimerOnEntity(player, task -> {
+            if (!hasProtection(uuid)) {
+                task.cancel();
+                return;
             }
-        }.runTaskTimerAsynchronously(plugin, 0, 20);
+
+            final int current = timeRemaining.getAndDecrement();
+            messageManager.sendProtectionInfo(player, config.messages.timeRemaining,
+                    type.getPlaceholder(config),
+                    Placeholder.unparsed("time", String.valueOf(current))
+            );
+
+            if (current == 0) {
+                invinciblePlayers.remove(uuid);
+                messageManager.sendProtectionInfo(player, config.messages.protectionEnded, type.getPlaceholder(config));
+                task.cancel();
+            }
+        }, 0, 20);
 
         spawnParticles(player);
     }
@@ -127,27 +121,22 @@ public class ProtectionHandler implements Listener {
             return;
         }
 
-        new UniversalRunnable() {
-            final Particle particle = config.particles.toParticle();
-            final int particleAmount = config.particles.amount;
+        final UUID playerUUID = player.getUniqueId();
+        final Particle particle = config.particles.toParticle();
+        final int particleAmount = config.particles.amount;
 
-            final UUID playerUUID = player.getUniqueId();
-            final World world = player.getWorld();
+        plugin.getScheduler().runTimerOnEntity(player, task -> {
+            if (hasProtection(playerUUID)) {
+                final Location location = player.getLocation().add(0, player.getHeight() / 2, 0);
 
-            @Override
-            public void run() {
-                if (hasProtection(playerUUID)) {
-                    final Location location = player.getLocation().add(0, player.getHeight() / 2, 0);
-
-                    for (double[] coord : particleCoordinates) {
-                        final Location particleLocation = location.clone().add(coord[0], coord[1], coord[2]);
-                        world.spawnParticle(particle, particleLocation, particleAmount);
-                    }
-                } else {
-                    cancel();
+                for (double[] coord : particleCoordinates) {
+                    final Location particleLocation = location.clone().add(coord[0], coord[1], coord[2]);
+                    location.getWorld().spawnParticle(particle, particleLocation, particleAmount);
                 }
+            } else {
+                task.cancel();
             }
-        }.runTaskTimer(plugin, 0, config.particles.refreshRate);
+        }, 0, config.particles.refreshRate);
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
