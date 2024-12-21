@@ -1,6 +1,7 @@
 package me.rockquiet.joinprotection.external;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.rockquiet.joinprotection.BuildProps;
 import me.rockquiet.joinprotection.JoinProtection;
 import me.rockquiet.joinprotection.ProtectionHandler;
 import org.bukkit.entity.Player;
@@ -20,18 +21,17 @@ public class PlaceholderApi extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getIdentifier() {
-        return "joinprotection";
+        return BuildProps.ID;
     }
 
     @Override
     public @NotNull String getAuthor() {
-        return "rockquiet";
+        return BuildProps.AUTHOR;
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public @NotNull String getVersion() {
-        return plugin.getDescription().getVersion();
+        return BuildProps.VERSION;
     }
 
     @Override

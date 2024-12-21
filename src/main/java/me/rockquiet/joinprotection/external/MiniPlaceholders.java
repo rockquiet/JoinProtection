@@ -1,6 +1,7 @@
 package me.rockquiet.joinprotection.external;
 
 import io.github.miniplaceholders.api.Expansion;
+import me.rockquiet.joinprotection.BuildProps;
 import me.rockquiet.joinprotection.JoinProtection;
 import me.rockquiet.joinprotection.ProtectionHandler;
 import net.kyori.adventure.text.Component;
@@ -19,7 +20,7 @@ public class MiniPlaceholders {
     }
 
     public void registerExpansion() {
-        final Expansion expansion = Expansion.builder("joinprotection")
+        final Expansion expansion = Expansion.builder(BuildProps.ID)
                 .filter(Player.class)
                 .audiencePlaceholder("status", (audience, queue, ctx) -> {
                     final Player player = (Player) audience;

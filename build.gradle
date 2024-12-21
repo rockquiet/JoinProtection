@@ -4,9 +4,6 @@ plugins {
     alias(libs.plugins.run.paper)
 }
 
-group = 'me.rockquiet'
-version = '2.0.0-SNAPSHOT'
-
 repositories {
     mavenCentral()
     maven {
@@ -35,6 +32,7 @@ java {
 
 tasks.withType(JavaCompile).configureEach {
     options.release = targetJavaVersion
+    options.encoding = 'UTF-8'
 }
 
 tasks.withType(AbstractArchiveTask).configureEach {
@@ -42,14 +40,31 @@ tasks.withType(AbstractArchiveTask).configureEach {
     reproducibleFileOrder = true
 }
 
+def props = [
+        name       : project.name,
+        id         : project.name.toLowerCase(Locale.ROOT),
+        version    : project.version,
+        description: project.description,
+        author     : project.author,
+        repo       : project.repo
+]
+
 processResources {
-    def props = [version: version]
     inputs.properties props
     filteringCharset 'UTF-8'
     filesMatching('plugin.yml') {
         expand props
     }
 }
+
+def processTemplates = tasks.register('processTemplates', Copy) {
+    inputs.properties props
+    from file('src/main/java-templates')
+    into layout.buildDirectory.dir('generated/sources/java-templates').get().asFile
+    expand props
+}
+tasks.shadowJar.dependsOn(processTemplates)
+sourceSets.main.java.srcDir(processTemplates.map { it.outputs })
 
 shadowJar {
     archiveClassifier = ''

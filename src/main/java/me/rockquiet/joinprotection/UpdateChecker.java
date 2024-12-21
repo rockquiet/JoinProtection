@@ -13,19 +13,16 @@ import java.time.Duration;
 
 public class UpdateChecker {
 
-    @SuppressWarnings("deprecation")
     public UpdateChecker(JoinProtection plugin) {
         plugin.getScheduler().runAsync(() -> {
             try {
-                String currentVersion = plugin.getDescription().getVersion();
-
                 HttpClient client = HttpClient.newHttpClient();
 
                 JsonObject jsonResponse = JsonParser.parseString(
                         client.send(
                                 HttpRequest.newBuilder()
-                                        .uri(URI.create("https://api.github.com/repos/rockquiet/joinprotection/releases/latest"))
-                                        .setHeader("User-Agent", "JoinProtection " + currentVersion)
+                                        .uri(URI.create("https://api.github.com/repos/" + BuildProps.REPO + "/releases/latest"))
+                                        .setHeader("User-Agent", BuildProps.NAME + " " + BuildProps.VERSION)
                                         .timeout(Duration.ofSeconds(30))
                                         .GET()
                                         .build(),
@@ -34,7 +31,7 @@ public class UpdateChecker {
                 ).getAsJsonObject();
 
                 Version latest = Version.parse(jsonResponse.get("tag_name").getAsString().replaceFirst("^[Vv]", ""));
-                Version current = Version.parse(currentVersion);
+                Version current = Version.parse(BuildProps.VERSION);
                 int compare = latest.compareTo(current);
 
                 if (compare > 0) {

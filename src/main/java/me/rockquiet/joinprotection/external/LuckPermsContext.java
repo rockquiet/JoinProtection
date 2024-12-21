@@ -1,5 +1,6 @@
 package me.rockquiet.joinprotection.external;
 
+import me.rockquiet.joinprotection.BuildProps;
 import me.rockquiet.joinprotection.ProtectionHandler;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.context.ContextCalculator;
@@ -29,14 +30,14 @@ public class LuckPermsContext implements ContextCalculator<Player> {
 
     @Override
     public void calculate(@NonNull Player target, @NonNull ContextConsumer consumer) {
-        consumer.accept("joinprotection", protectionHandler.hasProtection(target.getUniqueId()) ? "true" : "false");
+        consumer.accept(BuildProps.ID, protectionHandler.hasProtection(target.getUniqueId()) ? "true" : "false");
     }
 
     @Override
     public @NonNull ContextSet estimatePotentialContexts() {
         return ImmutableContextSet.builder()
-                .add("joinprotection", "true")
-                .add("joinprotection", "false")
+                .add(BuildProps.ID, "true")
+                .add(BuildProps.ID, "false")
                 .build();
     }
 }

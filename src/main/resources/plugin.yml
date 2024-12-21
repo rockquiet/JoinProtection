@@ -1,8 +1,8 @@
-name: JoinProtection
+name: ${name}
 version: '${version}'
 main: me.rockquiet.joinprotection.JoinProtection
-description: Protects players from mobs and damage for a set time after joining/changing worlds
-author: rockquiet
+description: ${description}
+author: ${author}
 folia-supported: true
 api-version: 1.17
 
