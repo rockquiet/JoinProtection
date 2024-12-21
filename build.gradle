@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'com.gradleup.shadow' version '8.3.5'
-    id 'xyz.jpenilla.run-paper' version "2.3.1"
+    alias(libs.plugins.shadow)
+    alias(libs.plugins.run.paper)
 }
 
 group = 'me.rockquiet'
@@ -17,18 +17,13 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT'
+    compileOnly libs.paper.api
 
-    implementation 'net.kyori:adventure-text-minimessage:4.17.0'
-    implementation 'net.kyori:adventure-platform-bukkit:4.3.4'
+    implementation libs.bundles.adventure
+    implementation libs.configlib
+    implementation libs.bstats
 
-    implementation 'de.exlll:configlib-yaml:4.5.0'
-
-    implementation 'org.bstats:bstats-bukkit:3.1.0'
-
-    compileOnly 'me.clip:placeholderapi:2.11.6'
-    compileOnly 'io.github.miniplaceholders:miniplaceholders-api:2.2.3'
-    compileOnly 'net.luckperms:api:5.4'
+    compileOnly libs.bundles.plugin.integrations
 }
 
 def targetJavaVersion = 17

@@ -1,0 +1,38 @@
+[versions]
+paper-api = "1.20.4-R0.1-SNAPSHOT"
+
+adventure-minimessage = "4.17.0"
+adventure-bukkit = "4.3.4"
+configlib = "4.5.0"
+bstats = "3.1.0"
+
+# plugin integrations
+placeholderapi = "2.11.6"
+miniplaceholders = "2.2.3"
+luckperms = "5.4"
+
+# gradle plugins
+shadow = "8.3.5"
+run-paper = "2.3.1"
+
+[libraries]
+paper-api = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper-api" }
+
+adventure-minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure-minimessage" }
+adventure-bukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-bukkit" }
+configlib = { group = "de.exlll", name = "configlib-yaml", version.ref = "configlib" }
+bstats = { group = "org.bstats", name = "bstats-bukkit", version.ref = "bstats" }
+
+# plugin integrations
+placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
+miniplaceholders = { group = "io.github.miniplaceholders", name = "miniplaceholders-api", version.ref = "miniplaceholders" }
+luckperms = { group = "net.luckperms", name = "api", version.ref = "luckperms" }
+
+[bundles]
+adventure = ["adventure-minimessage", "adventure-bukkit"]
+plugin-integrations = ["placeholderapi", "miniplaceholders", "luckperms"]
+
+[plugins]
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+run-paper = { id = "xyz.jpenilla.run-paper", version.ref = "run-paper" }
+
