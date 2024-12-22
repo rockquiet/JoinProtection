@@ -58,7 +58,7 @@ public final class Config {
         @Comment("""
                 also protect players that switch worlds (i.e. go through a nether portal)
                 set this to 0 to disable""")
-        public int worldChangeProtectionTime = 10;
+        public int worldChangeProtectionTime = 0;
 
         @Comment("only give join protection to players who are joining the server for the first time.")
         public boolean firstJoinOnly = false;
