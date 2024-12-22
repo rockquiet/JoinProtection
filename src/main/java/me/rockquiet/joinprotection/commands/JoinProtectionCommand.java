@@ -17,6 +17,10 @@ import java.util.Locale;
 
 public class JoinProtectionCommand implements CommandExecutor {
 
+    protected static final String PROTECT = "protect";
+    protected static final String CANCEL = "cancel";
+    protected static final String RELOAD = "reload";
+
     private final JoinProtection plugin;
     private final MessageManager messageManager;
     private final ProtectionHandler protectionHandler;
@@ -34,9 +38,9 @@ public class JoinProtectionCommand implements CommandExecutor {
         if (args.length < 1) return false;
 
         return switch (args[0].toLowerCase(Locale.ROOT)) {
-            case "protect" -> protect(sender, removeFirstArg(args));
-            case "cancel" -> cancel(sender, removeFirstArg(args));
-            case "reload" -> reload(sender);
+            case PROTECT -> protect(sender, removeFirstArg(args));
+            case CANCEL -> cancel(sender, removeFirstArg(args));
+            case RELOAD -> reload(sender);
             default -> false;
         };
     }

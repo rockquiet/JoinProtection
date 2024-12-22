@@ -71,7 +71,7 @@ public class JoinProtection extends JavaPlugin {
         }
 
         getCommand("joinprotection").setExecutor(new JoinProtectionCommand(this, messageManager, protectionHandler));
-        getCommand("joinprotection").setTabCompleter(new TabComplete());
+        getCommand("joinprotection").setTabCompleter(new TabComplete(configManager));
 
         // PlaceholderAPI hook
         if (config().integration.placeholderapi.enabled && Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
