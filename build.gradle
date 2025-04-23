@@ -80,17 +80,17 @@ tasks {
         /*
         downloadPlugins {
             hangar("PlaceholderAPI", "2.11.6")
-            modrinth("MiniPlaceholders", "J2guR3GH") // 2.2.4
-            url("https://download.luckperms.net/1556/bukkit/loader/LuckPerms-Bukkit-5.4.141.jar")
+            modrinth("MiniPlaceholders", "wck4v0R0") // 2.3.0
+            url("https://download.luckperms.net/1575/bukkit/loader/LuckPerms-Bukkit-5.4.158.jar")
         }
          */
-        minecraftVersion("1.21.1")
+        minecraftVersion("1.21.4")
     }
     // Folia
     runPaper.folia.registerTask()
     runFolia {
         runDirectory(file("runFolia"))
-        minecraftVersion("1.20.6")
+        minecraftVersion("1.21.4")
     }
 }
 
