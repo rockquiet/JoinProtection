@@ -91,7 +91,7 @@ public class ProtectionHandler implements Listener {
         spawnParticles(player);
     }
 
-    public void calculateParticleCoordinates() {
+    public final void calculateParticleCoordinates() {
         final Config config = plugin.config();
         final double[] scale = config.particles.scaleFactor;
         final int circles = config.particles.circles <= 0 ? 4 : config.particles.circles;

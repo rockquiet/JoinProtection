@@ -18,6 +18,7 @@ public class PaperScheduler extends PlatformScheduler {
         this.asyncScheduler = plugin.getServer().getAsyncScheduler();
     }
 
+    @Override
     public void runTimerOnEntity(@NotNull Entity entity, @NotNull Consumer<? super PlatformTask> task, long delay, long period) {
         long finalDelay = Math.max(delay, 1L);
         new PaperTask(entity.getScheduler().runAtFixedRate(getPlugin(), scheduledTask -> task.accept(new PaperTask(scheduledTask)), null, finalDelay, period));
