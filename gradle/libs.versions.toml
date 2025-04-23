@@ -1,7 +1,7 @@
 [versions]
 paper-api = "1.20.4-R0.1-SNAPSHOT"
 
-adventure-minimessage = "4.19.0"
+adventure-minimessage = "4.20.0"
 adventure-bukkit = "4.3.4"
 configlib = "4.5.0"
 bstats = "3.1.0"
